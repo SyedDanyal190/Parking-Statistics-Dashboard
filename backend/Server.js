@@ -14,8 +14,8 @@ const cors = require("cors");
 app.use(cors());
 
 // Import routes
-const parkingRoutes = require("./routes/parkingRoute");
-app.use("/api/parking", parkingRoutes);
+const parkingRoute = require("./routes/parkingRoute");
+app.use("/api/parking", parkingRoute);
 
 
 
