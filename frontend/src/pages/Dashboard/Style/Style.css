@@ -1,0 +1,289 @@
+  #react-select-2-input {
+    color: inherit !important;
+    background: 0px center !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    grid-area: 1 / 2 !important;
+    font: inherit !important;
+    min-width: 2px !important;
+    border: 0px !important;
+    margin: 0px !important;
+    outline: 0px !important;
+    padding: 0px !important;
+}
+
+#SelectId
+{
+  width: 200px;
+}
+
+.rdrInputRanges
+{
+  display: none;
+}
+.rdrInputRanges
+{
+  display: none !important;
+}
+
+/* Custom styles to remove column borders */
+.table-custom th, .table-custom td {
+  border: none; /* Removes the border from table cells */
+}
+
+/* .table-custom td {
+  height: 25px;
+  padding: 0 !important;
+  line-height: 1 !important;
+} */
+
+
+.TopDivDateButton1
+{
+     position: relative;
+}
+#DateButton1{
+   position: absolute;
+    /* z-index: 1000;  */
+   /* margin-top: 10px;  */
+  }
+
+
+.btn-custom
+  {
+    width: auto;
+  }
+
+  .btn-custom span 
+  {
+    width: auto;
+  }
+
+  .button-text-style {
+    background-color: white;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+
+
+
+
+
+/* Button custom styles */
+.btn-custom-label {
+  background-color: white;
+  color: black;
+   min-width:70px ;
+   padding: 0px 5px;
+  border-radius: 5px;
+ 
+}
+
+
+
+.btn-primary-custom {
+  margin-left: 30px;
+  
+}
+
+.btn-custom-dropdown {
+  margin-left: 8px;
+  color: black;
+ 
+}
+
+
+
+#navbarHeaderIDSub
+{
+   display: flex;
+}
+
+
+#Okas
+{
+  height: 40px;
+  min-width:300px ;
+  background-color: rgba(248,249,250,255);
+  
+  color: black;
+  /* width: auto; */
+}
+
+.Header-dropDown
+{
+  
+   display: flex;
+}
+
+@media screen and (max-width: 769px) {
+  .Header-dropDown {
+    display: none !important;
+    border: 2px solid  black;  
+  }
+}
+
+
+
+
+.navbar-container {
+  display: flex;
+  /* Aligns items vertically centered */
+}
+
+
+
+.TopDivDateButton1 {
+  position: relative;
+}
+
+#DateButton1 {
+  position: absolute;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.TopDivDateButton1 {
+  position: relative;
+}
+
+#DateButton1 {
+  position: absolute;
+}
+/* #lll{
+    display: none;
+} */
+
+
+/* toastStyles.css */
+.custom-toast-container .Toastify__toast {
+  background-color: green;
+  color: white;
+}
+
+.custom-toast-container .Toastify__progress-bar {
+  background-color: white;
+}
+.custom-toast-container .Toastify__icon {
+  color: white;
+}
+
+
+
+
+@media screen and (max-width: 426px){
+
+  #TollPlaza
+  {
+    margin-top: 40px;
+  }
+  #Blue
+  {
+        display: flex;
+  }
+  /* .TopDivDateButton1 
+  {
+    display: none;
+  } */
+
+  #navbarHeaderIDSub
+  {
+     display: flex;
+  }
+  .navbar-brand-box
+{
+   display: none;
+}
+  .navbar-header
+  {
+    display: flex;
+    justify-content: space-between;
+  }
+  #navbarHeaderID
+  {
+     display: flex;
+     justify-content: space-between;
+  }
+  #ToggleButton
+  {
+   
+    margin-left: 10px;
+      /* /* display: flex; */
+      justify-content: flex-end;
+      /* Optional: add padding for better spacing */
+
+  }
+  #Okas
+  {
+    
+     margin-top: 24px;
+     margin-left: -50px;
+    background-color: white;
+  }
+  .rdrDateRangePickerWrapper {
+    margin-left: -100px !important; /* Adjust as needed */
+    height: auto;
+}
+  .TopDivDateButton1 {
+    position: absolute;
+  }
+  
+  #DateButton1 {
+    margin-top: 28px;
+    /* position: relative; */
+  }
+  
+}
+
+@media screen and (max-width: 376px) {
+
+  #ToggleButton {
+     margin-left: 0px;
+  }
+ /* .TopDivDateButton1 
+ {
+   display: none;
+ } */
+#Okas{
+  background-color: white;
+  margin-top: 26px;
+}
+
+}
+
+
+@media screen and (max-width: 321px) {
+    
+  #Okas
+  {
+    margin-left: -70px;
+    min-width:270px ;
+    margin-top: 26px;
+    background-color: white;
+  } 
+
+}
+
+
+
+
+
+/* Optional: Adjust padding/margin for visual clarity */
+
+
+
+
+
