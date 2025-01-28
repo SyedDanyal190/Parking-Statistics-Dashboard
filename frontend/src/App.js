@@ -104,6 +104,7 @@ const App = (props) => {
     if (selectedGroup && dateRange.startDate && dateRange.endDate) {
       const parkingName = encodeURIComponent(selectedGroup.value);
 
+
       // Adjust the time based on your logic
       const adjustTime = (date) => {
         if (!date) return null;
@@ -127,6 +128,7 @@ const App = (props) => {
         .endOf("day")
         .format("YYYY-MM-DDTHH:mm:ss[Z]");
 
+        
       console.log("Start Date (UTC): ", start);
       console.log("End Date (UTC): ", end);
 
