@@ -331,143 +331,315 @@
 
 
 
+// import React from "react";
+// import ReactApexChart from "react-apexcharts";
+
+// const SalesAnalyticsChart = ({ trafficData }) => {
+//   // Ensure trafficData exists and is structured as expected
+//   if (!trafficData || !trafficData.resultSameDate) {
+//     return <p>No traffic data available</p>;
+//   }
+
+//   console.log("TrafficVehicle!!!!!!!!!!!!!! ", trafficData.resultSameDate);
+
+//   // Extract date keys (dates like "2025-01-14", "2025-01-15")
+//   const dateKeys = Object.keys(trafficData.resultSameDate);
+
+//   // Determine if all dates are the same
+//   const allDatesSame = dateKeys.every(
+//     (date) =>
+//       date === dateKeys[0] // Check if every date is the same as the first date
+//   );
+
+//   // If dates are the same, use time slots (hours) as x-axis labels
+//   const timeSlots = allDatesSame ? Object.keys(trafficData.resultSameDate[dateKeys[0]]) : dateKeys;
+
+//   const colorMapping = {
+//     "text-danger": "#d9534f", // Bootstrap's danger color
+//     "text-info": "#5bc0de", // Bootstrap's info color
+//     "text-warning": "#f0ad4e", // Bootstrap's warning color
+//     "text-success": "#5cb85c", // Bootstrap's success color
+//   };
+
+  
+//   // Prepare the ApexCharts series dynamically based on trafficData
+//   const chartSeries = [];
+
+//   // Add Car series if data exists
+//   if (
+//     timeSlots.some(
+//       (timeSlot) =>
+//         allDatesSame
+//           ? trafficData.resultSameDate[dateKeys[0]][timeSlot].car > 0
+//           : trafficData.resultSameDate[timeSlot].car > 0
+//     )
+//   ) {
+//     chartSeries.push({
+//       name: "Cars",
+//       type: "column",
+//       data: timeSlots.map((timeSlot) =>
+//         allDatesSame
+//           ? trafficData.resultSameDate[dateKeys[0]][timeSlot].car
+//           : trafficData.resultSameDate[timeSlot].car
+//       ),
+//     });
+//   }
+
+//   // Add Van series if data exists
+//   if (
+//     timeSlots.some(
+//       (timeSlot) =>
+//         allDatesSame
+//           ? trafficData.resultSameDate[dateKeys[0]][timeSlot].van > 0
+//           : trafficData.resultSameDate[timeSlot].van > 0
+//     )
+//   ) {
+//     chartSeries.push({
+//       name: "Vans",
+//       type: "column",
+//       data: timeSlots.map((timeSlot) =>
+//         allDatesSame
+//           ? trafficData.resultSameDate[dateKeys[0]][timeSlot].van
+//           : trafficData.resultSameDate[timeSlot].van
+//       ),
+//     });
+//   }
+
+//   // Add Bus series if data exists
+//   if (
+//     timeSlots.some(
+//       (timeSlot) =>
+//         allDatesSame
+//           ? trafficData.resultSameDate[dateKeys[0]][timeSlot].bus > 0
+//           : trafficData.resultSameDate[timeSlot].bus > 0
+//     )
+//   ) {
+//     chartSeries.push({
+//       name: "Buses",
+//       type: "column",
+//       data: timeSlots.map((timeSlot) =>
+//         allDatesSame
+//           ? trafficData.resultSameDate[dateKeys[0]][timeSlot].bus
+//           : trafficData.resultSameDate[timeSlot].bus
+//       ),
+//     });
+//   }
+
+//   // Add Motorcycle series if data exists
+//   // if (
+//   //   timeSlots.some(
+//   //     (timeSlot) =>
+//   //       allDatesSame
+//   //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].motorbike > 0
+//   //         : trafficData.resultSameDate[timeSlot].motorbike > 0
+//   //   )
+//   // ) {
+//   //   chartSeries.push({
+//   //     name: "Motorcycles",
+//   //     type: "column",
+//   //     data: timeSlots.map((timeSlot) =>
+//   //       allDatesSame
+//   //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].motorbike
+//   //         : trafficData.resultSameDate[timeSlot].motorbike
+//   //     ),
+//   //   });
+//   // }
+
+//   // // Add Trucks series  if data exists
+//   // if (
+//   //   timeSlots.some(
+//   //     (timeSlot) =>
+//   //       allDatesSame
+//   //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].truck > 0
+//   //         : trafficData.resultSameDate[timeSlot].truck > 0
+//   //   )
+//   // ) {
+//   //   chartSeries.push({
+//   //     name: "Trucks",
+//   //     type: "column",
+//   //     data: timeSlots.map((timeSlot) =>
+//   //       allDatesSame
+//   //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].motorbike
+//   //         : trafficData.resultSameDate[timeSlot].motorbike
+//   //     ),
+//   //   });
+//   // }
+
+//   console.log("Chart Series: ", chartSeries);
+
+//   // ApexCharts options
+//   const chartOptions = {
+//     options: {
+//       chart: {
+//         height: 338,
+//         type: "line",
+//         stacked: false,
+//         toolbar: {
+//           show: false,
+//         },
+//       },
+//       stroke: {
+//         width: [1, 1, 1, 1],
+//         curve: "smooth",
+//       },
+//       plotOptions: {
+//         bar: {
+//           columnWidth: "40%",
+//         },
+//       },
+//       colors: [
+//         colorMapping["text-danger"], // Cars
+//         colorMapping["text-info"], // Vans
+//         colorMapping["text-warning"], // Buses
+//         // colorMapping["text-success"], // Motorcycles
+//       ],
+//       fill: {
+//         opacity: [0.65, 1, 0.35, 1],
+//         gradient: {
+//           inverseColors: false,
+//           shade: "light",
+//           type: "vertical",
+//           opacityFrom: 0.65,
+//           opacityTo: 0.4,
+//           stops: [0, 100, 100, 100],
+//         },
+//       },
+//       labels: timeSlots, // Use the time slots (or dates) as x-axis labels
+//       markers: {
+//         size: 0,
+//       },
+//       dataLabels: {
+//         enabled: false,
+//       },
+//       xaxis: {
+//         categories: timeSlots, // Set categories as time slots or dates
+//         type: "category",
+//       },
+//       yaxis: {
+//         title: {
+//           text: "Number of vehicles",
+//         },
+//       },
+//       tooltip: {
+//         shared: true,
+//         intersect: false,
+//         y: {
+//           formatter: "{value} vehicles",
+//         },
+//       },
+//       grid: {
+//         borderColor: "#f1f1f1",
+//         padding: {
+//           bottom: 15,
+//           left: 100,
+//           right: 90,
+//         },
+//       },
+//     },
+//   };
+
+//   return (
+//     <div>
+//       <h1>Parking Data Visualization</h1>
+//       {timeSlots.length > 0 ? (
+//         <ReactApexChart
+//           options={chartOptions.options}
+//           series={chartSeries}
+//           type="line"
+//           height={338}
+//         />
+//       ) : (
+//         <p>Loading chart data...</p>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default SalesAnalyticsChart;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// Dynmaic colors
+
+
+
+
+
+
+
+
+
+
+
+
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 const SalesAnalyticsChart = ({ trafficData }) => {
-  // Ensure trafficData exists and is structured as expected
   if (!trafficData || !trafficData.resultSameDate) {
     return <p>No traffic data available</p>;
   }
 
-  console.log("TrafficVehicle!!!!!!!!!!!!!! ", trafficData.resultSameDate);
-
-  // Extract date keys (dates like "2025-01-14", "2025-01-15")
   const dateKeys = Object.keys(trafficData.resultSameDate);
-
-  // Determine if all dates are the same
   const allDatesSame = dateKeys.every(
-    (date) =>
-      date === dateKeys[0] // Check if every date is the same as the first date
+    (date) => date === dateKeys[0]
   );
 
-  // If dates are the same, use time slots (hours) as x-axis labels
   const timeSlots = allDatesSame ? Object.keys(trafficData.resultSameDate[dateKeys[0]]) : dateKeys;
 
   const colorMapping = {
-    "text-danger": "#d9534f", // Bootstrap's danger color
-    "text-info": "#5bc0de", // Bootstrap's info color
-    "text-warning": "#f0ad4e", // Bootstrap's warning color
-    "text-success": "#5cb85c", // Bootstrap's success color
+    "text-danger": "#d9534f", // Red for Cars
+    "text-info": "#5bc0de", // Blue for Vans
+    "text-warning": "#f0ad4e", // Yellow for Buses
+    "text-success": "#5cb85c", // Green for Motorcycles
   };
 
-  
-  // Prepare the ApexCharts series dynamically based on trafficData
   const chartSeries = [];
 
-  // Add Car series if data exists
-  if (
-    timeSlots.some(
-      (timeSlot) =>
-        allDatesSame
-          ? trafficData.resultSameDate[dateKeys[0]][timeSlot].car > 0
-          : trafficData.resultSameDate[timeSlot].car > 0
-    )
-  ) {
+  // Dynamically add series if data exists for the vehicle types
+  if (timeSlots.some(
+    (timeSlot) => allDatesSame ? trafficData.resultSameDate[dateKeys[0]][timeSlot].car > 0 : trafficData.resultSameDate[timeSlot].car > 0)) {
     chartSeries.push({
       name: "Cars",
       type: "column",
-      data: timeSlots.map((timeSlot) =>
-        allDatesSame
-          ? trafficData.resultSameDate[dateKeys[0]][timeSlot].car
-          : trafficData.resultSameDate[timeSlot].car
-      ),
+      data: timeSlots.map((timeSlot) => allDatesSame ? trafficData.resultSameDate[dateKeys[0]][timeSlot].car : trafficData.resultSameDate[timeSlot].car),
+      color: colorMapping["text-danger"]
     });
   }
 
-  // Add Van series if data exists
-  if (
-    timeSlots.some(
-      (timeSlot) =>
-        allDatesSame
-          ? trafficData.resultSameDate[dateKeys[0]][timeSlot].van > 0
-          : trafficData.resultSameDate[timeSlot].van > 0
-    )
-  ) {
+  if (timeSlots.some(
+    (timeSlot) => allDatesSame ? trafficData.resultSameDate[dateKeys[0]][timeSlot].van > 0 : trafficData.resultSameDate[timeSlot].van > 0)) {
     chartSeries.push({
       name: "Vans",
       type: "column",
-      data: timeSlots.map((timeSlot) =>
-        allDatesSame
-          ? trafficData.resultSameDate[dateKeys[0]][timeSlot].van
-          : trafficData.resultSameDate[timeSlot].van
-      ),
+      data: timeSlots.map((timeSlot) => allDatesSame ? trafficData.resultSameDate[dateKeys[0]][timeSlot].van : trafficData.resultSameDate[timeSlot].van),
+      color: colorMapping["text-info"]
     });
   }
 
-  // Add Bus series if data exists
-  if (
-    timeSlots.some(
-      (timeSlot) =>
-        allDatesSame
-          ? trafficData.resultSameDate[dateKeys[0]][timeSlot].bus > 0
-          : trafficData.resultSameDate[timeSlot].bus > 0
-    )
-  ) {
+  if (timeSlots.some(
+    (timeSlot) => allDatesSame ? trafficData.resultSameDate[dateKeys[0]][timeSlot].bus > 0 : trafficData.resultSameDate[timeSlot].bus > 0)) {
     chartSeries.push({
       name: "Buses",
       type: "column",
-      data: timeSlots.map((timeSlot) =>
-        allDatesSame
-          ? trafficData.resultSameDate[dateKeys[0]][timeSlot].bus
-          : trafficData.resultSameDate[timeSlot].bus
-      ),
+      data: timeSlots.map((timeSlot) => allDatesSame ? trafficData.resultSameDate[dateKeys[0]][timeSlot].bus : trafficData.resultSameDate[timeSlot].bus),
+      color: colorMapping["text-warning"]
     });
   }
 
-  // Add Motorcycle series if data exists
-  // if (
-  //   timeSlots.some(
-  //     (timeSlot) =>
-  //       allDatesSame
-  //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].motorbike > 0
-  //         : trafficData.resultSameDate[timeSlot].motorbike > 0
-  //   )
-  // ) {
-  //   chartSeries.push({
-  //     name: "Motorcycles",
-  //     type: "column",
-  //     data: timeSlots.map((timeSlot) =>
-  //       allDatesSame
-  //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].motorbike
-  //         : trafficData.resultSameDate[timeSlot].motorbike
-  //     ),
-  //   });
-  // }
-
-  // // Add Trucks series  if data exists
-  // if (
-  //   timeSlots.some(
-  //     (timeSlot) =>
-  //       allDatesSame
-  //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].truck > 0
-  //         : trafficData.resultSameDate[timeSlot].truck > 0
-  //   )
-  // ) {
-  //   chartSeries.push({
-  //     name: "Trucks",
-  //     type: "column",
-  //     data: timeSlots.map((timeSlot) =>
-  //       allDatesSame
-  //         ? trafficData.resultSameDate[dateKeys[0]][timeSlot].motorbike
-  //         : trafficData.resultSameDate[timeSlot].motorbike
-  //     ),
-  //   });
-  // }
-
-  console.log("Chart Series: ", chartSeries);
-
-  // ApexCharts options
+  
   const chartOptions = {
     options: {
       chart: {
@@ -487,14 +659,8 @@ const SalesAnalyticsChart = ({ trafficData }) => {
           columnWidth: "40%",
         },
       },
-      colors: [
-        colorMapping["text-danger"], // Cars
-        colorMapping["text-info"], // Vans
-        colorMapping["text-warning"], // Buses
-        // colorMapping["text-success"], // Motorcycles
-      ],
       fill: {
-        opacity: [0.65, 1, 0.35, 1],
+        opacity: [0.65, 1, 0.35],
         gradient: {
           inverseColors: false,
           shade: "light",
@@ -504,15 +670,14 @@ const SalesAnalyticsChart = ({ trafficData }) => {
           stops: [0, 100, 100, 100],
         },
       },
-      labels: timeSlots, // Use the time slots (or dates) as x-axis labels
       markers: {
-        size: 0,
+        size: 4,  // Ensure that the marker is visible even when only one series is present
       },
       dataLabels: {
         enabled: false,
       },
       xaxis: {
-        categories: timeSlots, // Set categories as time slots or dates
+        categories: timeSlots,
         type: "category",
       },
       yaxis: {
@@ -556,12 +721,3 @@ const SalesAnalyticsChart = ({ trafficData }) => {
 };
 
 export default SalesAnalyticsChart;
-
-
-
-
-
-
-
-
-

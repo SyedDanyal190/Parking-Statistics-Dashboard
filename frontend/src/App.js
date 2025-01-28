@@ -19,6 +19,7 @@ import "./assets/scss/theme.scss";
 
 // Import fake backend
 import fakeBackend from "./helpers/AuthType/fakeBackend";
+import { method } from "lodash";
 
 // Activating fake backend
 fakeBackend();
@@ -64,9 +65,18 @@ const App = (props) => {
     console.log("Updated Date Range in Parent:", dateRange);
   }, [dateRange]);
 
+
+// Base Url for APis
+
+ const baseUrl = process.env.REACT_APP_API_BASE_URL; 
+
+
   // Function to refresh the toll plaza data
   const refreshTollPlazaData = () => {
-    fetch("http://localhost:4001/api/parking/parkingNames", { method: "GET" })
+ 
+   fetch(`${baseUrl}/apipsd/parking/parkingNames` ,{ method: "GET" })
+
+    // fetch("http://localhost:4002/apipsd/parking/parkingNames", { method: "GET" })
       .then((response) => response.json())
       .then((data) => {
         const tollPlazaOptions = data.map((parkingName) => ({
@@ -123,9 +133,10 @@ const App = (props) => {
       if (adjustedStart && adjustedEnd) {
         // Fetch the combined data API
         fetch(
-          `http://localhost:4001/api/parking/parkingData?parking=${parkingName}&startDate=${start}&endDate=${end}`,
-          { method: "GET" }
-        )
+      
+             
+           `${baseUrl}/apipsd/parking/parkingData?parking=${parkingName}&startDate=${start}&endDate=${end}`, {method : "GET"})
+     
           .then((response) => response.json())
           .then((data) => {
             console.log("Received Traffic Data: ", data); // Log the data received

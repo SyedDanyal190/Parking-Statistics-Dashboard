@@ -246,15 +246,25 @@ const Add = ({ refreshTollPlazaData }) => {
     e.preventDefault();
     setLoading(true);
 
+
+    const baseUrl = process.env.REACT_APP_API_BASE_URL; 
+
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     
     // We will send the file under 'data.json' for simplicity
     formData.jsonFiles.forEach((file) => formDataToSend.append('data.json', file));
 
+
+
+
     try {
-      const response = await fetch('http://localhost:4001/api/parking/upload', {
-        method: 'POST',
+    
+
+
+          const response  =  await  fetch(`${baseUrl}/apipsd/parking/upload` , {
+    
+      method: 'POST',
         body: formDataToSend,
       });
 
