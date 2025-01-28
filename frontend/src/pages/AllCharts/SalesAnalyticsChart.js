@@ -608,6 +608,7 @@ const SalesAnalyticsChart = ({ trafficData }) => {
 
   const chartSeries = [];
 
+  
   // Dynamically add series if data exists for the vehicle types
   if (timeSlots.some(
     (timeSlot) => allDatesSame ? trafficData.resultSameDate[dateKeys[0]][timeSlot].car > 0 : trafficData.resultSameDate[timeSlot].car > 0)) {
