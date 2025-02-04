@@ -69,6 +69,7 @@ const App = (props) => {
 // Base Url for APis
 
  const baseUrl = process.env.REACT_APP_API_BASE_URL; 
+ 
 
   // Function to refresh the toll plaza data
   const refreshTollPlazaData = () => {
