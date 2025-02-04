@@ -249,6 +249,9 @@ const Add = ({ refreshTollPlazaData }) => {
 
     const baseUrl = process.env.REACT_APP_API_BASE_URL; 
 
+
+
+
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     
