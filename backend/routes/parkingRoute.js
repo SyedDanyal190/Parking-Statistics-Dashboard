@@ -251,6 +251,166 @@ const formatParkingData = (data) => {
   }
 };
 
+// const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
+//   // Generate all hour ranges
+//   const generateHourRanges = () => {
+//     const ranges = [];
+//     for (let i = 0; i < 24; i += 2) {
+//       const start = `${String(i).padStart(2, "0")}:00`;
+//       const end = `${String((i + 2) % 24).padStart(2, "0")}:00`;
+//       ranges.push(`${start}-${end}`);
+//     }
+//     return ranges;
+//   };
+
+//   const hourRanges = generateHourRanges();
+//   const result = {};
+
+//   // Initialize the result object for each hour range across all days
+//   for (
+//     let currentDate = new Date(startDate);
+//     currentDate <= new Date(endDate);
+//     currentDate.setDate(currentDate.getDate() + 1)
+//   ) {
+//     const dateKey = currentDate.toISOString().split("T")[0]; // Format date as YYYY-MM-DD
+//     result[dateKey] = {};
+
+//     hourRanges.forEach((hourRange) => {
+//       result[dateKey][hourRange] = {
+//         totalDuration: 0,
+//         cost: 0, // Add cost to each interval
+//       };
+//     });
+//   }
+
+//   // Iterate through vehicles and calculate duration for each interval
+//   vehicles.forEach((vehicle) => {
+//     const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+//     const timeOut = moment.utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A").toDate();
+
+//     for (
+//       let currentDate = new Date(startDate);
+//       currentDate <= new Date(endDate);
+//       currentDate.setDate(currentDate.getDate() + 1)
+//     ) {
+//       const dateKey = currentDate.toISOString().split("T")[0];
+//       // const dayStart = new Date(dateKey);
+//       // const dayEnd = new Date(dateKey);
+
+//       const dayStart = moment
+//         .utc(dateKey, "YYYY-MM-DD")
+//         .add(5, "hours")
+//         .startOf("day")
+//         .toDate();
+
+//       const dayEnd = moment
+//         .utc(dateKey, "YYYY-MM-DD")
+//         .add(5, "hours")
+//         .endOf("day")
+//         .toDate();
+
+//       //  dayEnd.setHours(23, 59, 59, 999);
+
+//       // console.log("dayend  !!!!!!!35421244442154", dayEnd);
+
+//       // Check if vehicle overlaps with the current day
+//       if (timeIn <= dayEnd && timeOut >= dayStart) {
+//         // Determine the actual overlap period for this day
+//         const overlapStart = new Date(Math.max(dayStart, timeIn));
+//         const overlapEnd = new Date(Math.min(dayEnd, timeOut));
+
+//         hourRanges.forEach((hourRange) => {
+//           // const [hourStart, hourEnd] = hourRange.split("-").map((time) => {
+       
+
+
+//             // Replace -00:00 with -24:00 for easier parsing
+//   const adjustedHourRange = hourRange.replace("-00:00", "-24:00");
+
+//   // Split adjusted hour range and map to date objects
+//   const [hourStart, hourEnd] = adjustedHourRange.split("-").map((time) => {
+
+//      const [hour, minute] = time.split(":").map(Number);
+//             const rangeDate = new Date(dateKey); // Base date (e.g., 2023-01-14T00:00:00.000Z)
+//             rangeDate.setUTCHours(hour, minute, 0, 0); // Use UTC to avoid timezone issues
+//             return rangeDate;
+//           });
+
+
+      
+//           // Special handling for the "22:00-00:00" range to ensure "End" remains on the same day
+//           if (hourEnd.getUTCHours() === 0) {
+//             hourEnd.setUTCDate(hourEnd.getUTCDate() - 1); // Adjust back to the same day
+//             hourEnd.setUTCHours(24, 0, 0, 0); // Set to 00:00:00 on the same day
+//             // hourEnd.setUTCHours(23, 59, 59, 999); // Set to 23:59:59.999 on the same day
+//           }
+
+
+
+          
+//   // console.log("Hour Range:", hourStart, "-", hourEnd);
+//           // Correctly compare the overlap
+//           if (overlapStart <= hourEnd && overlapEnd >= hourStart) {
+//             const intervalStart = new Date(Math.max(overlapStart, hourStart));
+//             const intervalEnd = new Date(Math.min(overlapEnd, hourEnd));
+//             const duration = (intervalEnd - intervalStart) / (1000 * 60); // Convert ms to minutes
+
+
+
+            
+//             result[dateKey][hourRange].totalDuration += duration;
+//           }
+//         });
+//       }
+//     }
+//   });
+
+//   // Aggregate totals for each interval across all days, and apply the rate for cost calculation
+//   const aggregatedResult = hourRanges.reduce((acc, hourRange) => {
+//     acc[hourRange] = { totalDuration: 0, cost: 0 }; // Initialize both totalDuration and cost
+//     Object.values(result).forEach((dayData) => {
+//       acc[hourRange].totalDuration += dayData[hourRange].totalDuration; // Sum up durations
+//     });
+
+//     acc[hourRange].cost = acc[hourRange].totalDuration * rate; // Apply the rate here for cost calculation
+
+//     return acc;
+//   }, {});
+
+//   // Find the highest values
+//   let highestDuration = { hourRange: "", totalDuration: 0 };
+//   let highestCost = { hourRange: "", cost: 0 };
+
+//   Object.entries(aggregatedResult).forEach(([hourRange, data]) => {
+//     if (data.totalDuration > highestDuration.totalDuration) {
+//       highestDuration = { hourRange, totalDuration: data.totalDuration };
+//     }
+//     if (data.cost > highestCost.cost) {
+//       highestCost = { hourRange, cost: data.cost };
+//     }
+//   });
+
+//   // Calculate total cost
+//   const totalcost = Object.values(aggregatedResult).reduce(
+//     (sum, data) => sum + data.cost,
+//     0
+//   );
+
+// // Calculate the average cost for intervals with non-zero values
+//   const nonZeroIntervals = Object.values(aggregatedResult).filter((data) => data.cost > 0);
+//   const averageCost = nonZeroIntervals.reduce((sum, data) => sum + data.cost, 0) / nonZeroIntervals.length;
+  
+
+//   return {
+//     dailyDurations: result,
+//     totalByIntervals: aggregatedResult,
+//     highestDuration,
+//     highestCost,
+//     totalcost,
+//     averageCost,
+//   };
+// };
+
 const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
   // Generate all hour ranges
   const generateHourRanges = () => {
@@ -278,6 +438,7 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
     hourRanges.forEach((hourRange) => {
       result[dateKey][hourRange] = {
         totalDuration: 0,
+        durations: [], // Initialize durations array to calculate average later
         cost: 0, // Add cost to each interval
       };
     });
@@ -294,8 +455,6 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
       currentDate.setDate(currentDate.getDate() + 1)
     ) {
       const dateKey = currentDate.toISOString().split("T")[0];
-      // const dayStart = new Date(dateKey);
-      // const dayEnd = new Date(dateKey);
 
       const dayStart = moment
         .utc(dateKey, "YYYY-MM-DD")
@@ -309,10 +468,6 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
         .endOf("day")
         .toDate();
 
-      //  dayEnd.setHours(23, 59, 59, 999);
-
-      // console.log("dayend  !!!!!!!35421244442154", dayEnd);
-
       // Check if vehicle overlaps with the current day
       if (timeIn <= dayEnd && timeOut >= dayStart) {
         // Determine the actual overlap period for this day
@@ -320,46 +475,55 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
         const overlapEnd = new Date(Math.min(dayEnd, timeOut));
 
         hourRanges.forEach((hourRange) => {
-          // const [hourStart, hourEnd] = hourRange.split("-").map((time) => {
-       
+          const adjustedHourRange = hourRange.replace("-00:00", "-24:00");
 
-
-            // Replace -00:00 with -24:00 for easier parsing
-  const adjustedHourRange = hourRange.replace("-00:00", "-24:00");
-
-  // Split adjusted hour range and map to date objects
-  const [hourStart, hourEnd] = adjustedHourRange.split("-").map((time) => {
-
-     const [hour, minute] = time.split(":").map(Number);
+          const [hourStart, hourEnd] = adjustedHourRange.split("-").map((time) => {
+            const [hour, minute] = time.split(":").map(Number);
             const rangeDate = new Date(dateKey); // Base date (e.g., 2023-01-14T00:00:00.000Z)
             rangeDate.setUTCHours(hour, minute, 0, 0); // Use UTC to avoid timezone issues
             return rangeDate;
           });
 
-
-      
           // Special handling for the "22:00-00:00" range to ensure "End" remains on the same day
           if (hourEnd.getUTCHours() === 0) {
             hourEnd.setUTCDate(hourEnd.getUTCDate() - 1); // Adjust back to the same day
             hourEnd.setUTCHours(24, 0, 0, 0); // Set to 00:00:00 on the same day
-            // hourEnd.setUTCHours(23, 59, 59, 999); // Set to 23:59:59.999 on the same day
           }
 
-
-
-          
-  // console.log("Hour Range:", hourStart, "-", hourEnd);
           // Correctly compare the overlap
           if (overlapStart <= hourEnd && overlapEnd >= hourStart) {
             const intervalStart = new Date(Math.max(overlapStart, hourStart));
             const intervalEnd = new Date(Math.min(overlapEnd, hourEnd));
             const duration = (intervalEnd - intervalStart) / (1000 * 60); // Convert ms to minutes
 
-            result[dateKey][hourRange].totalDuration += duration;
+            // Store the duration for averaging later
+            result[dateKey][hourRange].durations.push(duration);
           }
         });
       }
     }
+  });
+
+  // After collecting all durations, calculate average durations and total cost
+  Object.keys(result).forEach((dateKey) => {
+    Object.keys(result[dateKey]).forEach((hourRange) => {
+      const durations = result[dateKey][hourRange].durations;
+
+      if (durations.length > 1) {
+        // If there are multiple durations, calculate the average
+        result[dateKey][hourRange].totalDuration =
+          durations.reduce((sum, dur) => sum + dur, 0) / durations.length;
+      } else if (durations.length === 1) {
+        // If there is only one vehicle, use that duration
+        result[dateKey][hourRange].totalDuration = durations[0];
+      } else {
+        // No vehicles in this interval
+        result[dateKey][hourRange].totalDuration = 0;
+      }
+
+      // Calculate cost based on the totalDuration
+      result[dateKey][hourRange].cost = result[dateKey][hourRange].totalDuration * rate;
+    });
   });
 
   // Aggregate totals for each interval across all days, and apply the rate for cost calculation
@@ -393,10 +557,9 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
     0
   );
 
-// Calculate the average cost for intervals with non-zero values
+  // Calculate the average cost for intervals with non-zero values
   const nonZeroIntervals = Object.values(aggregatedResult).filter((data) => data.cost > 0);
   const averageCost = nonZeroIntervals.reduce((sum, data) => sum + data.cost, 0) / nonZeroIntervals.length;
-  
 
   return {
     dailyDurations: result,
@@ -407,7 +570,6 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
     averageCost,
   };
 };
-
 
 
 
@@ -528,12 +690,14 @@ router.get("/parkingData", (req, res) => {
       // console.log('Total Cost:', totalCost); // 4265
 
       const combinedData = {
+        dailyDurations,
         highestDuration,
         highestCost,
         totalcost,
         vehicleCount,
         resultSameDate,
         averageCost,
+        totalByIntervals,
       };
 
       // res.json(parsedData);

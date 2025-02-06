@@ -12,6 +12,7 @@ import Welcome from "./Welcome";
 import Loader from "./Loader";
 // import Testing from "./Testing";
 import New from "./New";
+// import Grapgh from "./Grapgh";
 
 
 const Dashboard = ({ selectedGroup, optionGroup, tollPlazaData,
@@ -127,6 +128,9 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
                    normalizedRatio={normalizedRatio}  />
                 </Col>
                 {/* <Col xl={4}>
+                 <Grapgh  trafficData={trafficData} />
+                </Col> */}
+                {/* <Col xl={4}>
                   <TotalVehicleCount 
                     tollPlazaData={tollPlazaData} 
                     onVehicleCountLogged={setVehicleWithHighestCount} 
@@ -166,7 +170,7 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
                 />
                 </Col>
               </Row> */}
-            
+                  
                  <Row>
                  <Col xl={12}>
                    <New trafficData={trafficData} />

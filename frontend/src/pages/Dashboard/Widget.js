@@ -27,17 +27,29 @@ const Widget = ({ trafficData }) => {
       color: "primary",
     },
     // New box added here
+    // {
+    //   title: "Average Cost", // Replace with your title
+
+    //   count:
+    //     averageCost !== undefined && averageCost !== null
+    //       ? `$${averageCost}`
+    //       : 0, // Show 0 if averageCost is missing
+    //   // count: `${averageCost}`,      // Replace with your data (can be a string or number)
+    //   icon: "mdi mdi-account-group text-primary", // Icon for the new box
+    //   color: "secondary", // Color for the new box
+    // },
+
     {
       title: "Average Cost", // Replace with your title
-
       count:
         averageCost !== undefined && averageCost !== null
-          ? `$${averageCost}`
-          : 0, // Show 0 if averageCost is missing
-      // count: `${averageCost}`,      // Replace with your data (can be a string or number)
+          ? `$${Math.round(averageCost)}` // Round the value before adding "$"
+          : "$0", // Show "$0" if averageCost is missing
       icon: "mdi mdi-account-group text-primary", // Icon for the new box
       color: "secondary", // Color for the new box
     },
+    
+
   ];
 
   return (
