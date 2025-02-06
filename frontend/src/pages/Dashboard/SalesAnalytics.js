@@ -31,6 +31,7 @@ const SalesAnalytics = ({
     lhrIsbRatio = numerator; // LHR-ISB ratio
     isbLhrRatio = denominator; // ISB-LHR ratio
   }
+  
 
   return (
     <React.Fragment>

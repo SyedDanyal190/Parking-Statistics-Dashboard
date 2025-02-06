@@ -115,6 +115,7 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
 
               <Row>
                 <Col xl={8}>
+                
                   <SalesAnalytics
                     trafficData={trafficData}
                     totalVehicleCount={totalVehicleCount}
