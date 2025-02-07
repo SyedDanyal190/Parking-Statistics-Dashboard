@@ -504,52 +504,133 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
     }
   });
 
-  // After collecting all durations, calculate average durations and total cost
-  Object.keys(result).forEach((dateKey) => {
-    Object.keys(result[dateKey]).forEach((hourRange) => {
-      const durations = result[dateKey][hourRange].durations;
+  // // After collecting all durations, calculate average durations and total cost
+  // Object.keys(result).forEach((dateKey) => {
+  //   Object.keys(result[dateKey]).forEach((hourRange) => {
+  //     const durations = result[dateKey][hourRange].durations;
 
-      if (durations.length > 1) {
-        // If there are multiple durations, calculate the average
-        result[dateKey][hourRange].totalDuration =
-          durations.reduce((sum, dur) => sum + dur, 0) / durations.length;
-      } else if (durations.length === 1) {
-        // If there is only one vehicle, use that duration
-        result[dateKey][hourRange].totalDuration = durations[0];
-      } else {
-        // No vehicles in this interval
-        result[dateKey][hourRange].totalDuration = 0;
-      }
+  //     if (durations.length > 1) {
+  //       // If there are multiple durations, calculate the average
+  //       result[dateKey][hourRange].totalDuration =
+  //         durations.reduce((sum, dur) => sum + dur, 0) / durations.length;
+  //     } else if (durations.length === 1) {
+  //       // If there is only one vehicle, use that duration
+  //       result[dateKey][hourRange].totalDuration = durations[0];
+  //     } else {
+  //       // No vehicles in this interval
+  //       result[dateKey][hourRange].totalDuration = 0;
+  //     }
 
-      // Calculate cost based on the totalDuration
-      result[dateKey][hourRange].cost = result[dateKey][hourRange].totalDuration * rate;
-    });
+  //     // Calculate cost based on the totalDuration
+  //     result[dateKey][hourRange].cost = result[dateKey][hourRange].totalDuration * rate;
+  //   });
+  // });
+
+  // // Aggregate totals for each interval across all days, and apply the rate for cost calculation
+  // const aggregatedResult = hourRanges.reduce((acc, hourRange) => {
+  //   acc[hourRange] = { totalDuration: 0, cost: 0 }; // Initialize both totalDuration and cost
+  //   Object.values(result).forEach((dayData) => {
+  //     acc[hourRange].totalDuration += dayData[hourRange].totalDuration; // Sum up durations
+  //   });
+
+  //   acc[hourRange].cost = acc[hourRange].totalDuration * rate; // Apply the rate here for cost calculation
+
+  //   return acc;
+  // }, {});
+
+  // // Find the highest values
+  // let highestDuration = { hourRange: "", totalDuration: 0 };
+  // let highestCost = { hourRange: "", cost: 0 };
+
+  // Object.entries(aggregatedResult).forEach(([hourRange, data]) => {
+  //   if (data.totalDuration > highestDuration.totalDuration) {
+  //     highestDuration = { hourRange, totalDuration: data.totalDuration };
+  //   }
+  //   if (data.cost > highestCost.cost) {
+  //     highestCost = { hourRange, cost: data.cost };
+  //   }
+  // });
+
+  // // Calculate total cost
+  // const totalcost = Object.values(aggregatedResult).reduce(
+  //   (sum, data) => sum + data.cost,
+  //   0
+  // );
+
+  // // Calculate the average cost for intervals with non-zero values
+  // const nonZeroIntervals = Object.values(aggregatedResult).filter((data) => data.cost > 0);
+  // const averageCost = nonZeroIntervals.reduce((sum, data) => sum + data.cost, 0) / nonZeroIntervals.length;
+
+  // return {
+  //   dailyDurations: result,
+  //   totalByIntervals: aggregatedResult,
+  //   highestDuration,
+  //   highestCost,
+  //   totalcost,
+  //   averageCost,
+  // };
+
+
+// After collecting all durations, calculate average durations and total cost
+Object.keys(result).forEach((dateKey) => {
+  let totalDailyDuration = 0;
+  let totalVehicleCount = 0;
+
+  Object.keys(result[dateKey]).forEach((hourRange) => {
+    const durations = result[dateKey][hourRange].durations;
+    const vehicleCount = durations.length;
+
+    if (vehicleCount > 0) {
+      totalVehicleCount += vehicleCount;
+
+      // If there are multiple durations, calculate the average for the hour range
+      const hourDuration = durations.reduce((sum, dur) => sum + dur, 0) / vehicleCount;
+      result[dateKey][hourRange].totalDuration = hourDuration;
+
+      // Add to the daily total duration
+      totalDailyDuration += hourDuration;
+    } else {
+      // No vehicles in this interval
+      result[dateKey][hourRange].totalDuration = 0;
+    }
+
+    // Calculate cost based on the totalDuration
+    result[dateKey][hourRange].cost = result[dateKey][hourRange].totalDuration * rate;
   });
 
-  // Aggregate totals for each interval across all days, and apply the rate for cost calculation
-  const aggregatedResult = hourRanges.reduce((acc, hourRange) => {
-    acc[hourRange] = { totalDuration: 0, cost: 0 }; // Initialize both totalDuration and cost
-    Object.values(result).forEach((dayData) => {
-      acc[hourRange].totalDuration += dayData[hourRange].totalDuration; // Sum up durations
-    });
+  // Calculate the daily average duration for this date
+  // The average is the total daily duration divided by the total number of vehicles
+  result[dateKey].dailyAverageDuration = totalVehicleCount > 0
+    ? totalDailyDuration / totalVehicleCount
+    : 0; // Handle the case where there are no vehicles
+});
 
-    acc[hourRange].cost = acc[hourRange].totalDuration * rate; // Apply the rate here for cost calculation
-
-    return acc;
-  }, {});
-
-  // Find the highest values
-  let highestDuration = { hourRange: "", totalDuration: 0 };
-  let highestCost = { hourRange: "", cost: 0 };
-
-  Object.entries(aggregatedResult).forEach(([hourRange, data]) => {
-    if (data.totalDuration > highestDuration.totalDuration) {
-      highestDuration = { hourRange, totalDuration: data.totalDuration };
-    }
-    if (data.cost > highestCost.cost) {
-      highestCost = { hourRange, cost: data.cost };
-    }
+// Aggregate totals for each interval across all days, and apply the rate for cost calculation
+const aggregatedResult = hourRanges.reduce((acc, hourRange) => {
+  acc[hourRange] = { totalDuration: 0, cost: 0 }; // Initialize both totalDuration and cost
+  Object.values(result).forEach((dayData) => {
+    acc[hourRange].totalDuration += dayData[hourRange].totalDuration; // Sum up durations
   });
+
+  acc[hourRange].cost = acc[hourRange].totalDuration * rate; // Apply the rate here for cost calculation
+
+  return acc;
+}, {});
+
+// Find the highest values
+let highestDuration = { hourRange: "", totalDuration: 0 };
+let highestCost = { hourRange: "", cost: 0 };
+
+Object.entries(aggregatedResult).forEach(([hourRange, data]) => {
+  if (data.totalDuration > highestDuration.totalDuration) {
+    highestDuration = { hourRange, totalDuration: data.totalDuration };
+  }
+  if (data.cost > highestCost.cost) {
+    highestCost = { hourRange, cost: data.cost };
+  }
+});
+
+
 
   // Calculate total cost
   const totalcost = Object.values(aggregatedResult).reduce(
@@ -557,18 +638,30 @@ const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
     0
   );
 
-  // Calculate the average cost for intervals with non-zero values
-  const nonZeroIntervals = Object.values(aggregatedResult).filter((data) => data.cost > 0);
-  const averageCost = nonZeroIntervals.reduce((sum, data) => sum + data.cost, 0) / nonZeroIntervals.length;
 
-  return {
-    dailyDurations: result,
-    totalByIntervals: aggregatedResult,
-    highestDuration,
-    highestCost,
-    totalcost,
-    averageCost,
-  };
+// Calculate the average cost for intervals with non-zero values
+const nonZeroIntervals = Object.values(aggregatedResult).filter((data) => data.cost > 0);
+const averageCost = nonZeroIntervals.reduce((sum, data) => sum + data.cost, 0) / nonZeroIntervals.length;
+
+// Calculate the whole day average across all days
+const wholeDayAverage =
+  Object.keys(result).reduce((sum, dateKey) => {
+    const dailyAverage = result[dateKey].dailyAverageDuration;
+    return sum + (isNaN(dailyAverage) ? 0 : dailyAverage); // Only add valid daily averages
+  }, 0) / Object.keys(result).length;
+
+return {
+  dailyDurations: result,
+  totalByIntervals: aggregatedResult,
+  highestDuration,
+  highestCost,
+  totalcost,
+  averageCost,
+  wholeDayAverage,
+};
+
+
+
 };
 
 
@@ -652,7 +745,8 @@ router.get("/parkingData", (req, res) => {
         highestDuration,
         highestCost,
         totalcost,
-        averageCost
+        averageCost,
+        wholeDayAverage,
       } = calculateDurationByIntervals(
         dynamicStartDate,
         dynamicEndDate,
@@ -665,6 +759,7 @@ router.get("/parkingData", (req, res) => {
       console.log("highest Cost value", highestCost);
       console.log("total cost", totalcost);
       console.log("averaegcost",averageCost);
+      console.log("wholeDay",wholeDayAverage)
 
       const resultSameDate = processVehicleData(
         dynamicStartDate,
