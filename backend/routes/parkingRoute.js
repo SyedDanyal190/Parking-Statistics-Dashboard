@@ -53,18 +53,142 @@ const generateHourRanges = () => {
   return ranges;
 };
 
+// const processVehicleData = (startDate, endDate, vehicles) => {
+//   // Convert input date strings to Date objects for comparison
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+
+//   // Initialize the result object to store vehicle counts
+//   const result = {};
+
+//   // Check if the start and end dates are the same
+//   if (start.toISOString().split("T")[0] === end.toISOString().split("T")[0]) {
+//     // Same date, calculate hourly breakdown for one day
+//     const dateKey = start.toISOString().split("T")[0]; // YYYY-MM-DD format
+//     if (!result[dateKey]) {
+//       result[dateKey] = generateHourRanges().reduce((acc, hour) => {
+//         acc[hour] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//           totalDuration : 0,
+//         };
+//         return acc;
+//       }, {});
+//     }
+
+
+
+
+
+
+
+//     // Loop through each vehicle and check if it fits within any hour of the day
+//     vehicles.forEach((vehicle) => {
+//       // const timeIn = new Date(vehicle.timeIn);
+//       // const timeOut = new Date(vehicle.timeOut);
+//       const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+//       const timeOut = moment
+//         .utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A")
+//         .toDate();
+
+//       if (
+//         timeIn.toISOString().split("T")[0] === dateKey ||
+//         timeOut.toISOString().split("T")[0] === dateKey
+//       ) {
+//         generateHourRanges().forEach((hourRange) => {
+//           // const [hourStart, hourEnd] = hourRange
+//           //   .split("-")
+//           //   .map((time) => parseInt(time.split(":")[0]));
+
+// const standardizedRange = hourRange.replace("-00:00", "-24:00");
+// const [hourStart, hourEnd] = standardizedRange.split("-").map((time) => parseInt(time.split(":")[0]));
+
+// // console.log(`Hour Range: ${hourStart}-${hourEnd}`);
+
+//           const vehicleStartHour = getHour(vehicle.timeIn);
+//           const vehicleEndHour = getHour(vehicle.timeOut);
+
+
+
+// // console.log("Vehicle Hours:", vehicleStartHour, "-", vehicleEndHour);
+
+//           // if ((vehicleStartHour <= hourEnd && vehicleEndHour >= hourStart) || (vehicleStartHour === hourStart && vehicleEndHour === hourEnd)) {
+//           if (
+//             (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
+//             // (vehicleEndHour > hourStart && vehicleEndHour <= hourEnd) ||
+//             (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
+//           ) {
+//             result[dateKey][hourRange].total += 1;
+//             result[dateKey][hourRange][vehicle.vehicleType.toLowerCase()] += 1;
+//           }
+//         });
+//       }
+//     });
+//   } else {
+//     // Different date range, calculate daily totals
+//     for (
+//       let currentDate = new Date(start);
+//       currentDate <= end;
+//       currentDate.setDate(currentDate.getDate() + 1)
+//     ) {
+//       const dateKey = currentDate.toISOString().split("T")[0]; // Format the date as YYYY-MM-DD
+
+//       if (!result[dateKey]) {
+//         result[dateKey] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//         };
+//       }
+
+
+
+//       vehicles.forEach((vehicle) => {
+//         const timeIn = moment
+//           .utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A")
+//           .toDate();
+//         const timeOut = moment
+//           .utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A")
+//           .toDate();
+
+          
+
+
+//         if (
+//           timeIn <= end &&
+//           timeOut >= start && // Vehicle overlaps with the selected date range
+//           // new Date(dateKey).setHours(0, 0, 0, 0) <= timeOut.getTime() &&
+//           // new Date(dateKey).setHours(23, 59, 59, 999) >= timeIn.getTime()
+//           new Date(dateKey).setUTCHours(0, 0, 0, 0) <= timeOut.getTime() &&
+//           new Date(dateKey).setUTCHours(23, 59, 59, 999) >= timeIn.getTime()
+  
+
+//         ) {
+//           result[dateKey].total += 1;
+//           result[dateKey][vehicle.vehicleType.toLowerCase()] += 1;
+//         }
+//       });
+//     }
+//   }
+
+//   return result;
+// };
+  
 const processVehicleData = (startDate, endDate, vehicles) => {
-  // Convert input date strings to Date objects for comparison
   const start = new Date(startDate);
   const end = new Date(endDate);
-
-  // Initialize the result object to store vehicle counts
   const result = {};
 
-  // Check if the start and end dates are the same
   if (start.toISOString().split("T")[0] === end.toISOString().split("T")[0]) {
-    // Same date, calculate hourly breakdown for one day
-    const dateKey = start.toISOString().split("T")[0]; // YYYY-MM-DD format
+    const dateKey = start.toISOString().split("T")[0];
+
     if (!result[dateKey]) {
       result[dateKey] = generateHourRanges().reduce((acc, hour) => {
         acc[hour] = {
@@ -74,61 +198,49 @@ const processVehicleData = (startDate, endDate, vehicles) => {
           bus: 0,
           van: 0,
           motorbike: 0,
+          vehicles: [], // Store individual vehicle durations
         };
         return acc;
       }, {});
     }
 
-    // Loop through each vehicle and check if it fits within any hour of the day
     vehicles.forEach((vehicle) => {
-      // const timeIn = new Date(vehicle.timeIn);
-      // const timeOut = new Date(vehicle.timeOut);
       const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
-      const timeOut = moment
-        .utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A")
-        .toDate();
+      const timeOut = moment.utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A").toDate();
+      const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
 
       if (
         timeIn.toISOString().split("T")[0] === dateKey ||
         timeOut.toISOString().split("T")[0] === dateKey
       ) {
         generateHourRanges().forEach((hourRange) => {
-          // const [hourStart, hourEnd] = hourRange
-          //   .split("-")
-          //   .map((time) => parseInt(time.split(":")[0]));
-
-const standardizedRange = hourRange.replace("-00:00", "-24:00");
-const [hourStart, hourEnd] = standardizedRange.split("-").map((time) => parseInt(time.split(":")[0]));
-
-// console.log(`Hour Range: ${hourStart}-${hourEnd}`);
+          const standardizedRange = hourRange.replace("-00:00", "-24:00");
+          const [hourStart, hourEnd] = standardizedRange.split("-").map((time) => parseInt(time.split(":")[0]));
 
           const vehicleStartHour = getHour(vehicle.timeIn);
           const vehicleEndHour = getHour(vehicle.timeOut);
 
-
-
-// console.log("Vehicle Hours:", vehicleStartHour, "-", vehicleEndHour);
-
-          // if ((vehicleStartHour <= hourEnd && vehicleEndHour >= hourStart) || (vehicleStartHour === hourStart && vehicleEndHour === hourEnd)) {
           if (
             (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
-            // (vehicleEndHour > hourStart && vehicleEndHour <= hourEnd) ||
             (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
           ) {
             result[dateKey][hourRange].total += 1;
             result[dateKey][hourRange][vehicle.vehicleType.toLowerCase()] += 1;
+            result[dateKey][hourRange].vehicles.push({
+              type: vehicle.vehicleType.toLowerCase(),
+              duration,
+            });
           }
         });
       }
     });
   } else {
-    // Different date range, calculate daily totals
     for (
       let currentDate = new Date(start);
       currentDate <= end;
       currentDate.setDate(currentDate.getDate() + 1)
     ) {
-      const dateKey = currentDate.toISOString().split("T")[0]; // Format the date as YYYY-MM-DD
+      const dateKey = currentDate.toISOString().split("T")[0];
 
       if (!result[dateKey]) {
         result[dateKey] = {
@@ -138,34 +250,27 @@ const [hourStart, hourEnd] = standardizedRange.split("-").map((time) => parseInt
           bus: 0,
           van: 0,
           motorbike: 0,
+          vehicles: [], // Store individual vehicle durations
         };
       }
 
-
-
       vehicles.forEach((vehicle) => {
-        const timeIn = moment
-          .utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A")
-          .toDate();
-        const timeOut = moment
-          .utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A")
-          .toDate();
-
-          
-
+        const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+        const timeOut = moment.utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A").toDate();
+        const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
 
         if (
           timeIn <= end &&
-          timeOut >= start && // Vehicle overlaps with the selected date range
-          // new Date(dateKey).setHours(0, 0, 0, 0) <= timeOut.getTime() &&
-          // new Date(dateKey).setHours(23, 59, 59, 999) >= timeIn.getTime()
+          timeOut >= start &&
           new Date(dateKey).setUTCHours(0, 0, 0, 0) <= timeOut.getTime() &&
           new Date(dateKey).setUTCHours(23, 59, 59, 999) >= timeIn.getTime()
-  
-
         ) {
           result[dateKey].total += 1;
           result[dateKey][vehicle.vehicleType.toLowerCase()] += 1;
+          result[dateKey].vehicles.push({
+            type: vehicle.vehicleType.toLowerCase(),
+            duration,
+          });
         }
       });
     }
@@ -173,7 +278,8 @@ const [hourStart, hourEnd] = standardizedRange.split("-").map((time) => parseInt
 
   return result;
 };
-  
+
+
 
 
 
@@ -774,7 +880,7 @@ router.get("/parkingData", (req, res) => {
      //   vehicles
      // );
 
-     // console.log("Result for Same Date Range:", resultSameDate);
+     console.log("Result for Same Date Range:", resultSameDate);
 
       // Example usage for Different Date Range
 

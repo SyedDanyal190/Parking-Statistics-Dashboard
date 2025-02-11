@@ -278,7 +278,10 @@
 }
 
 
-
+.apexcharts-menu-icon
+{
+  display: none;
+}
 
 
 /* Optional: Adjust padding/margin for visual clarity */
