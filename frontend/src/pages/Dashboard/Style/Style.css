@@ -284,6 +284,16 @@
 }
 
 
+.apexcharts-legend-text
+{
+   border-radius: 60%;
+}
+
+
+.apexcharts-legend-marker
+{
+  border-radius: 60%;
+}
 /* Optional: Adjust padding/margin for visual clarity */
 
 

@@ -6,6 +6,10 @@ const Widget = ({ trafficData }) => {
   const { totalcost, vehicleCount, highestDuration, averageCost } =
     trafficData || {};
 
+
+const  roundValue =  totalcost ? Math.round(totalcost * 100) / 100 : 0;
+let  formattedTotalCostValue  =  Number.isInteger(roundValue) ? roundValue : roundValue.toFixed(2);
+
   const widgetData = [
     {
       title: "Total Vehicle Count",
@@ -16,8 +20,11 @@ const Widget = ({ trafficData }) => {
     {
       title: "Total Cost",
       // count: totalcost || 0,
-      count: `$${totalcost || 0}`,
-      icon: "mdi mdi-cash-multiple text-success",
+      // count: `$${totalcost || 0}`,
+      count  :  formattedTotalCostValue,
+    
+
+      // icon: "mdi mdi-cash-multiple text-success",
       color: "warning",
     },
     {

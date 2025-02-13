@@ -373,7 +373,7 @@ import ReactApexChart from 'react-apexcharts';
 
 
 
-const ApexChart = ({trafficData}) => {
+const SalesAnalyticsChart = ({trafficData}) => {
 
 const dateKeys = Object.keys(trafficData.resultSameDate);
 
@@ -1068,7 +1068,7 @@ chart: {
   );
 };
 
-export default ApexChart;
+export default SalesAnalyticsChart;
 
 
 

@@ -181,6 +181,105 @@ const generateHourRanges = () => {
 //   return result;
 // };
   
+// const processVehicleData = (startDate, endDate, vehicles) => {
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+//   const result = {};
+
+//   if (start.toISOString().split("T")[0] === end.toISOString().split("T")[0]) {
+//     const dateKey = start.toISOString().split("T")[0];
+
+//     if (!result[dateKey]) {
+//       result[dateKey] = generateHourRanges().reduce((acc, hour) => {
+//         acc[hour] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//           vehicles: [], // Store individual vehicle durations
+//         };
+//         return acc;
+//       }, {});
+//     }
+
+//     vehicles.forEach((vehicle) => {
+//       const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+//       const timeOut = moment.utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A").toDate();
+//       const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
+
+//       if (
+//         timeIn.toISOString().split("T")[0] === dateKey ||
+//         timeOut.toISOString().split("T")[0] === dateKey
+//       ) {
+//         generateHourRanges().forEach((hourRange) => {
+//           const standardizedRange = hourRange.replace("-00:00", "-24:00");
+//           const [hourStart, hourEnd] = standardizedRange.split("-").map((time) => parseInt(time.split(":")[0]));
+
+//           const vehicleStartHour = getHour(vehicle.timeIn);
+//           const vehicleEndHour = getHour(vehicle.timeOut);
+
+//           if (
+//             (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
+//             (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
+//           ) {
+//             result[dateKey][hourRange].total += 1;
+//             result[dateKey][hourRange][vehicle.vehicleType.toLowerCase()] += 1;
+//             result[dateKey][hourRange].vehicles.push({
+//               type: vehicle.vehicleType.toLowerCase(),
+//               duration,
+//             });
+//           }
+//         });
+//       }
+//     });
+//   } else {
+//     for (
+//       let currentDate = new Date(start);
+//       currentDate <= end;
+//       currentDate.setDate(currentDate.getDate() + 1)
+//     ) {
+//       const dateKey = currentDate.toISOString().split("T")[0];
+
+//       if (!result[dateKey]) {
+//         result[dateKey] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//           vehicles: [], // Store individual vehicle durations
+//         };
+//       }
+
+//       vehicles.forEach((vehicle) => {
+//         const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+//         const timeOut = moment.utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A").toDate();
+//         const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
+
+//         if (
+//           timeIn <= end &&
+//           timeOut >= start &&
+//           new Date(dateKey).setUTCHours(0, 0, 0, 0) <= timeOut.getTime() &&
+//           new Date(dateKey).setUTCHours(23, 59, 59, 999) >= timeIn.getTime()
+//         ) {
+//           result[dateKey].total += 1;
+//           result[dateKey][vehicle.vehicleType.toLowerCase()] += 1;
+//           result[dateKey].vehicles.push({
+//             type: vehicle.vehicleType.toLowerCase(),
+//             duration,
+//           });
+//         }
+//       });
+//     }
+//   }
+
+//   return result;
+// };
+
+
 const processVehicleData = (startDate, endDate, vehicles) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -198,7 +297,7 @@ const processVehicleData = (startDate, endDate, vehicles) => {
           bus: 0,
           van: 0,
           motorbike: 0,
-          vehicles: [], // Store individual vehicle durations
+          vehicles: {}, // Store grouped durations by vehicle type
         };
         return acc;
       }, {});
@@ -208,6 +307,7 @@ const processVehicleData = (startDate, endDate, vehicles) => {
       const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
       const timeOut = moment.utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A").toDate();
       const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
+      const vehicleType = vehicle.vehicleType.toLowerCase();
 
       if (
         timeIn.toISOString().split("T")[0] === dateKey ||
@@ -225,15 +325,29 @@ const processVehicleData = (startDate, endDate, vehicles) => {
             (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
           ) {
             result[dateKey][hourRange].total += 1;
-            result[dateKey][hourRange][vehicle.vehicleType.toLowerCase()] += 1;
-            result[dateKey][hourRange].vehicles.push({
-              type: vehicle.vehicleType.toLowerCase(),
-              duration,
-            });
+            result[dateKey][hourRange][vehicleType] += 1;
+
+            if (!result[dateKey][hourRange].vehicles[vehicleType]) {
+              result[dateKey][hourRange].vehicles[vehicleType] = { totalDuration: 0, count: 0 };
+            }
+
+            result[dateKey][hourRange].vehicles[vehicleType].totalDuration += duration;
+            result[dateKey][hourRange].vehicles[vehicleType].count += 1;
           }
         });
       }
     });
+
+    // Convert stored durations to averages
+    Object.keys(result[dateKey]).forEach((hourRange) => {
+      const vehicleData = result[dateKey][hourRange].vehicles;
+      result[dateKey][hourRange].vehicles = Object.keys(vehicleData).map((type) => ({
+        type,
+        duration: parseFloat((vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)),
+        avgDuration: parseFloat((vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1))
+      }));
+    });
+
   } else {
     for (
       let currentDate = new Date(start);
@@ -250,7 +364,7 @@ const processVehicleData = (startDate, endDate, vehicles) => {
           bus: 0,
           van: 0,
           motorbike: 0,
-          vehicles: [], // Store individual vehicle durations
+          vehicles: {}, // Store grouped durations by vehicle type
         };
       }
 
@@ -258,6 +372,7 @@ const processVehicleData = (startDate, endDate, vehicles) => {
         const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
         const timeOut = moment.utc(vehicle.timeOut, "YYYY-MM-DD hh:mm A").toDate();
         const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
+        const vehicleType = vehicle.vehicleType.toLowerCase();
 
         if (
           timeIn <= end &&
@@ -266,20 +381,29 @@ const processVehicleData = (startDate, endDate, vehicles) => {
           new Date(dateKey).setUTCHours(23, 59, 59, 999) >= timeIn.getTime()
         ) {
           result[dateKey].total += 1;
-          result[dateKey][vehicle.vehicleType.toLowerCase()] += 1;
-          result[dateKey].vehicles.push({
-            type: vehicle.vehicleType.toLowerCase(),
-            duration,
-          });
+          result[dateKey][vehicleType] += 1;
+
+          if (!result[dateKey].vehicles[vehicleType]) {
+            result[dateKey].vehicles[vehicleType] = { totalDuration: 0, count: 0 };
+          }
+
+          result[dateKey].vehicles[vehicleType].totalDuration += duration;
+          result[dateKey].vehicles[vehicleType].count += 1;
         }
       });
+
+      // Convert stored durations to averages
+      const vehicleData = result[dateKey].vehicles;
+      result[dateKey].vehicles = Object.keys(vehicleData).map((type) => ({
+        type,
+        duration: parseFloat((vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)),
+        avgDuration: parseFloat((vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1))
+      }));
     }
   }
 
   return result;
 };
-
-
 
 
 

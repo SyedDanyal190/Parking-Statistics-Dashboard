@@ -294,7 +294,7 @@ const Add = ({ refreshTollPlazaData }) => {
       <form onSubmit={handleSubmit}>
         {/* Input for Toll Plaza Name */}
         <div className="mb-3">
-          <label className="form-label">Toll Plaza Name</label>
+          <label className="form-label">Parking  Name</label>
           <input
             type="text"
             name="name"

@@ -20,7 +20,7 @@
     "timeOut": "2025-01-22 3:08 AM"
   },
   "4": {
-    "vehicleType": "van",
+    "vehicleType": "car",
     "timeIn": "2025-01-23 9:01 PM",
     "timeOut": "2025-01-23 9:40 PM"
   },
@@ -33,8 +33,7 @@
     "vehicleType": "van",
     "timeIn": "2025-01-21 7:03 PM",
     "timeOut": "2025-01-21 7:10 PM"
-  } 
+  }
 
-
-
+ 
 }
