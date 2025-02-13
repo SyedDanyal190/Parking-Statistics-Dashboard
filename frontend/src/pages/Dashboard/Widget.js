@@ -21,7 +21,7 @@ let  formattedTotalCostValue  =  Number.isInteger(roundValue) ? roundValue : rou
       title: "Total Cost",
       // count: totalcost || 0,
       // count: `$${totalcost || 0}`,
-      count  :  formattedTotalCostValue,
+      count  :  `$${formattedTotalCostValue}`,
     
 
       // icon: "mdi mdi-cash-multiple text-success",
