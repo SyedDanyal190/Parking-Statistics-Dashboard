@@ -263,8 +263,6 @@ const Add = ({ refreshTollPlazaData }) => {
 
     try {
     
-
-
           const response  =  await  fetch(`${baseUrl}/apipsd/parking/upload` , {
     
       method: 'POST',
@@ -301,7 +299,7 @@ const Add = ({ refreshTollPlazaData }) => {
             value={formData.name}
             onChange={handleInputChange}
             className="form-control"
-            placeholder="Enter Toll Plaza Name"
+            placeholder="Enter Parking Name"
             required
           />
         </div>
