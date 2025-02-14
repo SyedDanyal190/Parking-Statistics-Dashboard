@@ -10,6 +10,17 @@ const Widget = ({ trafficData }) => {
 const  roundValue =  totalcost ? Math.round(totalcost * 100) / 100 : 0;
 let  formattedTotalCostValue  =  Number.isInteger(roundValue) ? roundValue : roundValue.toFixed(2);
 
+
+  // Format the average cost similarly
+const formattedAverageCostValue =
+averageCost !== undefined && averageCost !== null
+  ? Math.round(averageCost * 100) / 100 // Round to two decimal places
+  : 0;
+let formattedAvgCost =
+Number.isInteger(formattedAverageCostValue)
+  ? formattedAverageCostValue
+  : formattedAverageCostValue.toFixed(2);
+
   const widgetData = [
     {
       title: "Total Vehicle Count",
@@ -48,11 +59,14 @@ let  formattedTotalCostValue  =  Number.isInteger(roundValue) ? roundValue : rou
 
     {
       title: "Average Cost", // Replace with your title
-      count:
-        averageCost !== undefined && averageCost !== null
-          ? `$${Math.round(averageCost)}` // Round the value before adding "$"
-          : "$0", // Show "$0" if averageCost is missing
-      icon: "mdi mdi-account-group text-primary", // Icon for the new box
+      // count:
+      //   averageCost !== undefined && averageCost !== null
+      //     ? `$${Math.round(averageCost)}` // Round the value before adding "$"
+      //     : "$0", // Show "$0" if averageCost is missing
+     
+     
+          count: `$${formattedAvgCost}`,
+          icon: "mdi mdi-account-group text-primary", // Icon for the new box
       color: "secondary", // Color for the new box
     },
     

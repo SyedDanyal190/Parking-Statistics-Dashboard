@@ -840,7 +840,7 @@ formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedV
                                       // <span style="color: black"> ${vehicle.type} : ${vehicle.avgDuration} avgDuration</span><br/>
                                     tooltipHtml += `
                                         <span style="color:${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
-                                         <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${vehicle.avgDuration} Avg.Duration</span><br/>
+                                         <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${vehicle.avgDuration} mins</span><br/>
 
                                         `;
                                     shownVehicles.add(vehicle.type + vehicleTypeIndices[vehicle.type]); // Mark this vehicle as shown
@@ -892,7 +892,7 @@ formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedV
 //                    <span style="color: black">${vehicleType}: ${totalDuration} avgDuration</span><br/>
                     tooltipHtml += `
                         <span style="color: ${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
-                        <span style="color: black"> ${vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)} : ${totalDuration} Avg.Duration</span><br/>
+                        <span style="color: black"> ${vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)} : ${totalDuration} mins</span><br/>
                     `;
                 });
         

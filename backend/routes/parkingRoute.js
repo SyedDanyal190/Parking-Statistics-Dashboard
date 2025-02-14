@@ -468,18 +468,18 @@ const calculateTotalCost = (costData) => {
   return costData.reduce((total, item) => total + item.cost, 0);
 };
 
-const formatParkingData = (data) => {
-  try {
-    const parsedData = JSON.parse(data); // Parse the JSON data
-    // Format the data into the required structure
-    return Object.values(parsedData).map(
-      (entry) =>
-        `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}`
-    );
-  } catch (error) {
-    throw new Error("Invalid JSON data");
-  }
-};
+// const formatParkingData = (data) => {
+//   try {
+//     const parsedData = JSON.parse(data); // Parse the JSON data
+//     // Format the data into the required structure
+//     return Object.values(parsedData).map(
+//       (entry) =>
+//         `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}`
+//     );
+//   } catch (error) {
+//     throw new Error("Invalid JSON data");
+//   }
+// };
 
 // const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
 //   // Generate all hour ranges
@@ -640,6 +640,30 @@ const formatParkingData = (data) => {
 //     averageCost,
 //   };
 // };
+
+
+const formatParkingData = (data, startDate, endDate) => {
+  try {
+    const parsedData = JSON.parse(data); // Parse JSON data
+
+    // Convert start and end dates to UTC string format
+    const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
+    const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
+
+    return Object.values(parsedData)
+      .filter((entry) => {
+        const entryDate = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A").format("YYYY-MM-DD");
+        return entryDate >= startUTC && entryDate <= endUTC;
+      })
+      .map(
+        (entry) =>
+          `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}`
+      );
+  } catch (error) {
+    throw new Error("Invalid JSON data");
+  }
+};
+
 
 const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {
   // Generate all hour ranges
@@ -944,7 +968,7 @@ router.get("/parkingData", (req, res) => {
     try {
       // Send the raw parsed JSON data
       const parsedData = JSON.parse(data);
-      const result = formatParkingData(data);
+      const result = formatParkingData(data,dynamicStartDate, dynamicEndDate);
       const vehicleCount = countVehicles(
         dynamicStartDate,
         dynamicEndDate,
@@ -1023,6 +1047,7 @@ router.get("/parkingData", (req, res) => {
         resultSameDate,
         averageCost,
         totalByIntervals,
+        result,
       };
 
       // res.json(parsedData);

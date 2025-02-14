@@ -12,6 +12,8 @@ import Welcome from "./Welcome";
 import Loader from "./Loader";
 // import Testing from "./Testing";
 import New from "./New";
+
+import DisplayVehicleWithTime from "./DisplayVehicleWithTime";
 // import Grapgh from "./Grapgh";
 
 
@@ -172,6 +174,12 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
                 </Col>
               </Row> */}
                   
+   <Row>
+         <Col xl={12}>
+           <DisplayVehicleWithTime   trafficData={trafficData} />
+         </Col>
+   </Row>
+
                  <Row>
                  <Col xl={12}>
                    <New trafficData={trafficData} />
