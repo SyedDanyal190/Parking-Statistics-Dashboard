@@ -40,7 +40,7 @@ Number.isInteger(formattedAverageCostValue)
       color: "warning",
     },
     {
-      title: "Busies Parking Duration",
+      title: "Busiest Parking Duration",
       count: highestDuration?.hourRange || "No data available",
       icon: "mdi mdi-clock text-primary",
       color: "primary",

@@ -700,7 +700,7 @@ const formatParkingData = (data, startDate, endDate) => {
         const durationInHours = durationInMinutes / 60;
         const cost = (durationInHours * Rate).toFixed(2);
 
-        return `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}, Cost: $${cost}`;
+        return `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}, Cost: ${cost}`;
       });
   } catch (error) {
     throw new Error("Invalid JSON data");
