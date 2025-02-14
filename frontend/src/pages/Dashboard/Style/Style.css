@@ -298,5 +298,8 @@
 
 
 
-
+#DisplayVehicleTimeTableResponsive {
+  max-height: 400px; /* Adjust this based on row height */
+  overflow-y: auto; /* Enables vertical scrolling */
+}
 

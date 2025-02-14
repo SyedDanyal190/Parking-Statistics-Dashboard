@@ -30,6 +30,7 @@ Number.isInteger(formattedAverageCostValue)
     },
     {
       title: "Total Cost",
+      icon : "mdi mdi-currency-usd text-primary",
       // count: totalcost || 0,
       // count: `$${totalcost || 0}`,
       count  :  `$${formattedTotalCostValue}`,
@@ -39,7 +40,7 @@ Number.isInteger(formattedAverageCostValue)
       color: "warning",
     },
     {
-      title: "Highest Duration Hour Range",
+      title: "Busies Parking Duration",
       count: highestDuration?.hourRange || "No data available",
       icon: "mdi mdi-clock text-primary",
       color: "primary",

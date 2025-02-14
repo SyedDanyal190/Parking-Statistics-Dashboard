@@ -642,7 +642,41 @@ const calculateTotalCost = (costData) => {
 // };
 
 
-const formatParkingData = (data, startDate, endDate) => {
+
+// const formatParkingData = (data, startDate, endDate) => {
+//   try {
+//     const parsedData = JSON.parse(data); // Parse JSON data
+
+//     // Convert start and end dates to UTC string format
+//     const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
+//     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
+
+//     return Object.values(parsedData)
+//       .filter((entry) => {
+//         const entryDate = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A").format("YYYY-MM-DD");
+//         console.log("Entry Date:", entryDate); //
+//         return entryDate >= startUTC && entryDate <= endUTC;
+//       })
+//       .map((entry) => {
+//         // Calculate the duration in minutes
+//         const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
+//         const timeOut = moment.utc(entry.timeOut, "YYYY-MM-DD h:mm A");
+//         const durationInMinutes = timeOut.diff(timeIn, 'minutes');
+
+//         // Convert duration to hours and calculate cost
+//         const durationInHours = durationInMinutes / 60;
+//         const cost = (durationInHours * Rate).toFixed(2);
+
+//         // return `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}, Duration: ${durationInHours.toFixed(2)} minutes, Cost: $${cost}`;
+     
+//         return `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut},  Cost: $${cost}`;
+//       });
+//   } catch (error) {
+//     throw new Error("Invalid JSON data");
+//   }
+// };
+
+const formatParkingData = (data, startDate, endDate) => { 
   try {
     const parsedData = JSON.parse(data); // Parse JSON data
 
@@ -651,18 +685,28 @@ const formatParkingData = (data, startDate, endDate) => {
     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
 
     return Object.values(parsedData)
+      .sort((a, b) => moment.utc(a.timeIn, "YYYY-MM-DD h:mm A").valueOf() - moment.utc(b.timeIn, "YYYY-MM-DD h:mm A").valueOf()) // Sort by timeIn
       .filter((entry) => {
         const entryDate = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A").format("YYYY-MM-DD");
         return entryDate >= startUTC && entryDate <= endUTC;
       })
-      .map(
-        (entry) =>
-          `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}`
-      );
+      .map((entry) => {
+        // Calculate the duration in minutes
+        const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
+        const timeOut = moment.utc(entry.timeOut, "YYYY-MM-DD h:mm A");
+        const durationInMinutes = timeOut.diff(timeIn, 'minutes');
+
+        // Convert duration to hours for cost calculation
+        const durationInHours = durationInMinutes / 60;
+        const cost = (durationInHours * Rate).toFixed(2);
+
+        return `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}, Cost: $${cost}`;
+      });
   } catch (error) {
     throw new Error("Invalid JSON data");
   }
 };
+
 
 
 const calculateDurationByIntervals = (startDate, endDate, vehicles, rate) => {

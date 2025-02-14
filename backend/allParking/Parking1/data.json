@@ -31,8 +31,18 @@
   },
   "6": {
     "vehicleType": "van",
-    "timeIn": "2025-01-21 7:03 PM",
+    "timeIn": "2025-01-21 7:10 PM",
     "timeOut": "2025-01-21 7:10 PM"
+  },
+  "7": {
+    "vehicleType": "car",
+    "timeIn": "2025-01-23 9:00 PM",
+    "timeOut": "2025-01-23 9:00 PM"
+  },
+  "8": {
+    "vehicleType": "bus",
+    "timeIn": "2025-01-22 11:00 PM",
+    "timeOut": "2025-01-22 11:00 PM"
   }
 
  

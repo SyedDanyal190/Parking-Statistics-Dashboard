@@ -116,7 +116,7 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
               </Row>
 
               <Row>
-                <Col xl={8}>
+                <Col xl={12}>
                 
                   <SalesAnalytics
                     trafficData={trafficData}
@@ -180,11 +180,11 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
          </Col>
    </Row>
 
-                 <Row>
+                 {/* <Row>
                  <Col xl={12}>
                    <New trafficData={trafficData} />
                  </Col>
-                 </Row>
+                 </Row> */}
             </>
           )}
         </Container>
