@@ -1,49 +1,57 @@
 {
   "0": {
     "vehicleType": "car",
+    "vehicleNumber" : "PXT-3058",
     "timeIn": "2025-01-21 7:30 PM",
     "timeOut": "2025-01-21 7:50 PM"
   },
   "1": {
     "vehicleType": "bus",
+    "vehicleNumber" : "BKT-4930",
     "timeIn": "2025-01-21 1:10 AM",
     "timeOut": "2025-01-21 1:16 AM"
   },
   "2": {
     "vehicleType": "bus",
+    "vehicleNumber" : "QZR-8271",
     "timeIn": "2025-01-22 11:00 PM",
     "timeOut": "2025-01-22 11:10 PM"
   },
   "3": {
     "vehicleType": "car",
+    "vehicleNumber" : "LJX-5816",
     "timeIn": "2025-01-22 3:00 AM",
     "timeOut": "2025-01-22 3:08 AM"
   },
   "4": {
     "vehicleType": "car",
+    "vehicleNumber" : "FAN-6409",
     "timeIn": "2025-01-23 9:01 PM",
     "timeOut": "2025-01-23 9:40 PM"
   },
   "5": {
     "vehicleType": "car",
+    "vehicleNumber" : "MWD-3725",
     "timeIn": "2025-01-23 5:00 AM",
     "timeOut": "2025-01-23 5:15 AM"
   },
   "6": {
     "vehicleType": "van",
+    "vehicleNumber" : "SXY-2598",
     "timeIn": "2025-01-21 7:10 PM",
     "timeOut": "2025-01-21 7:10 PM"
   },
   "7": {
     "vehicleType": "car",
+    "vehicleNumber" : "HBL-9137",
     "timeIn": "2025-01-23 9:00 PM",
     "timeOut": "2025-01-23 9:00 PM"
   },
   "8": {
     "vehicleType": "bus",
+    "vehicleNumber" : "VFN-8041",
     "timeIn": "2025-01-22 11:00 PM",
     "timeOut": "2025-01-22 11:00 PM"
   }
 
- 
 }

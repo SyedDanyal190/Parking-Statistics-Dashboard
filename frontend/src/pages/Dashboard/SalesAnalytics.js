@@ -37,7 +37,7 @@ const SalesAnalytics = ({
     <React.Fragment>
       <Card className="card-height-100">
         <CardBody>
-          <h4 className="card-title mb-4">Parking Statistics</h4>
+          {/* <h4 className="card-title mb-4">Parking Statistics</h4> */}
 
           <div className="mt-1">
             <ul className="list-inline main-chart mb-0">
