@@ -111,9 +111,9 @@ return (
     <td>{timeOut}</td>
     <td>
       {isZeroDuration ? (
-        <button className="btn btn-primary">Pay Now</button>
+        <button className="btn btn-primary btn-sm">Pay Now</button>
       ) : (
-        `$${cost}`
+        `$${cost} Paid`
       )}
     </td>
   </tr>
