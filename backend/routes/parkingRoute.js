@@ -697,14 +697,64 @@ const formatParkingData = (data, startDate, endDate) => {
         const durationInMinutes = timeOut.diff(timeIn, 'minutes');
 
         // Convert duration to hours for cost calculation
-        const durationInHours = durationInMinutes / 60;
-        const cost = (durationInHours * Rate).toFixed(2);
+        // const durationInHours = durationInMinutes / 60;
+        // const cost = (durationInHours * Rate).toFixed(2);
+
+          const cost  = (durationInMinutes * Rate).toFixed(2);
 
         // return `${entry.vehicleType} - Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}, Cost: ${cost}`;
      //// Add  VehicleNumber 
-     return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}, Cost: ${cost}`;
+     return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${entry.timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level :${entry.level},`;
 
       });
+  } catch (error) {
+    throw new Error("Invalid JSON data");
+  }
+};
+
+
+
+const formatParkingDataOtherValues = (data, startDate, endDate) => { 
+  try {
+    const parsedData = JSON.parse(data);
+    const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
+    const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
+
+    console.log("Start Date:", startUTC, "End Date:", endUTC);
+    
+    let totalCost = 0;
+    let vehicleCount = 0;
+
+    Object.values(parsedData)
+      .sort((a, b) => moment.utc(a.timeIn, "YYYY-MM-DD h:mm A").valueOf() - moment.utc(b.timeIn, "YYYY-MM-DD h:mm A").valueOf())
+      .filter((entry) => {
+        const entryDate = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A").format("YYYY-MM-DD");
+        const isInRange = entryDate >= startUTC && entryDate <= endUTC;
+        
+       
+        
+        return isInRange;
+      })
+      .forEach((entry) => {
+        const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
+        const timeOut = moment.utc(entry.timeOut, "YYYY-MM-DD h:mm A");
+        const durationInMinutes = timeOut.diff(timeIn, 'minutes');
+
+        const cost = (durationInMinutes * 5).toFixed(2);
+        totalCost += parseFloat(cost);
+        vehicleCount++; // Count vehicles with valid durations
+       
+      });
+
+
+   // Calculate average cost and ensure it's a number
+   const averageCosting = vehicleCount > 0 ? parseFloat((totalCost / vehicleCount).toFixed(2)) : 0;
+
+ console.log("averageingsss ",averageCosting); 
+
+    // return totalCost;
+    return { totalCost,averageCosting };
+
   } catch (error) {
     throw new Error("Invalid JSON data");
   }
@@ -1016,6 +1066,7 @@ router.get("/parkingData", (req, res) => {
       // Send the raw parsed JSON data
       const parsedData = JSON.parse(data);
       const result = formatParkingData(data,dynamicStartDate, dynamicEndDate);
+      const result1 =  formatParkingDataOtherValues(data, dynamicStartDate , dynamicEndDate);
       const vehicleCount = countVehicles(
         dynamicStartDate,
         dynamicEndDate,
@@ -1080,6 +1131,7 @@ router.get("/parkingData", (req, res) => {
       // Example usage for Different Date Range
 
       console.log("DisplayVehiclewithTime", result);
+      console.log("TotalCost Reesult",result1);
       console.log("vehcileCount", vehicleCount);
       console.log("calculationDuration", calculationDurations);
       console.log("Updated Durations with Cost:", updatedDurationsWithCost);
@@ -1095,6 +1147,7 @@ router.get("/parkingData", (req, res) => {
         averageCost,
         totalByIntervals,
         result,
+        result1,
       };
 
       // res.json(parsedData);

@@ -2,20 +2,32 @@ import React from "react";
 import CountUp from "react-countup";
 import { Card, CardBody, Col, Row } from "reactstrap";
 
-const Widget = ({ trafficData }) => {
-  const { totalcost, vehicleCount, highestDuration, averageCost } =
+const Widget = ({ trafficData ,}) => {
+  // const { result1, vehicleCount, highestDuration, averageCost } =
+  //   trafficData || {};
+
+  const { result1, vehicleCount, highestDuration } =
     trafficData || {};
 
 
-const  roundValue =  totalcost ? Math.round(totalcost * 100) / 100 : 0;
+    const { totalCost, averageCosting } = result1 || {}; 
+
+const  roundValue =  totalCost ? Math.round(totalCost * 100) / 100 : 0;
 let  formattedTotalCostValue  =  Number.isInteger(roundValue) ? roundValue : roundValue.toFixed(2);
 
 
   // Format the average cost similarly
+// const formattedAverageCostValue =
+// averageCost !== undefined && averageCost !== null
+//   ? Math.round(averageCost * 100) / 100 // Round to two decimal places
+//   : 0;
+
 const formattedAverageCostValue =
-averageCost !== undefined && averageCost !== null
-  ? Math.round(averageCost * 100) / 100 // Round to two decimal places
+averageCosting !== undefined && averageCosting !== null
+  ? Math.round(averageCosting * 100) / 100 // Round to two decimal places
   : 0;
+
+
 let formattedAvgCost =
 Number.isInteger(formattedAverageCostValue)
   ? formattedAverageCostValue
