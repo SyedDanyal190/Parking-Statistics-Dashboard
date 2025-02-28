@@ -11,15 +11,17 @@ import { withTranslation } from "react-i18next";
 import Welcome from "./Welcome";
 import Loader from "./Loader";
 // import Testing from "./Testing";
-import New from "./New";
+// import New from "./New";
 
-import DisplayVehicleWithTime from "./DisplayVehicleWithTime";
+// import DisplayVehicleWithTime from "./DisplayVehicleWithTime";
+// import ChildComp from "./ChildComp";
+import MyDisplay from "./MyDisplay";
 // import Grapgh from "./Grapgh";
 
 
 const Dashboard = ({ selectedGroup, optionGroup, tollPlazaData,
   
-  
+  MainApi,
   trafficData,
   handleSelectGroup,
   vehicleData,
@@ -128,7 +130,8 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
                     tollPlazaData={tollPlazaData}
                     combinedCounts={combinedCounts}
                   vehicleWithHighestCount={vehicleWithHighestCount} 
-                   normalizedRatio={normalizedRatio}  />
+                   normalizedRatio={normalizedRatio}  
+                   />
                 </Col>
                 {/* <Col xl={4}>
                  <Grapgh  trafficData={trafficData} />
@@ -174,11 +177,23 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
                 </Col>
               </Row> */}
                   
-   <Row>
-         <Col xl={12}>
+   {/* <Row>
+         {/* <Col xl={8}>
            <DisplayVehicleWithTime   trafficData={trafficData} />
-         </Col>
+      
+         </Col> */}
+         {/* <Col xl={4}>
+             <ChildComp  MainApi={MainApi}  trafficData={trafficData} />
+         </Col> */}
+        
+   {/* </Row> */} 
+
+   <Row>
+   <Col xl={12}>
+              <MyDisplay  trafficData={trafficData}   MainApi={MainApi}    />
+           </Col>
    </Row>
+  
 
                  {/* <Row>
                  <Col xl={12}>

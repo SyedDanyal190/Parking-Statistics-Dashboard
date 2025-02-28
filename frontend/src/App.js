@@ -98,58 +98,109 @@ const App = (props) => {
     setSelectedGroup(selectedOption); // Set the selected toll plaza folder
   };
 
-  useEffect(() => {
-    console.log("Date Range Changed:", dateRange); // Log to verify the date range when it changes
+  // useEffect(() => {
+  //   console.log("Date Range Changed:", dateRange); // Log to verify the date range when it changes
 
-    if (selectedGroup && dateRange.startDate && dateRange.endDate) {
-      const parkingName = encodeURIComponent(selectedGroup.value);
+  //   if (selectedGroup && dateRange.startDate && dateRange.endDate) {
+  //     const parkingName = encodeURIComponent(selectedGroup.value);
 
 
-      // Adjust the time based on your logic
-      const adjustTime = (date) => {
-        if (!date) return null;
-        return moment.utc(date).add(5, "hours");
-      };
+  //     // Adjust the time based on your logic
+  //     const adjustTime = (date) => {
+  //       if (!date) return null;
+  //       return moment.utc(date).add(5, "hours");
+  //     };
 
-      // Adjusted dates with 5 hours added
-      const adjustedStart = adjustTime(dateRange.startDate);
-      const adjustedEnd = adjustTime(dateRange.endDate);
+  //     // Adjusted dates with 5 hours added
+  //     const adjustedStart = adjustTime(dateRange.startDate);
+  //     const adjustedEnd = adjustTime(dateRange.endDate);
 
-      console.log("start!!!!!!!!!!!!!!!!!!!!!!!!!!!!", adjustedStart);
-      console.log("End!!!!!!!!!!!!!!!!!!!!!!!!!!!!", adjustedEnd);
+  //     console.log("start!!!!!!!!!!!!!!!!!!!!!!!!!!!!", adjustedStart);
+  //     console.log("End!!!!!!!!!!!!!!!!!!!!!!!!!!!!", adjustedEnd);
 
-      // Ensure the end date is at the end of the same day
-      // const adjustedEndDay = adjustedStart.clone().endOf('day');
+  //     // Ensure the end date is at the end of the same day
+  //     // const adjustedEndDay = adjustedStart.clone().endOf('day');
 
-      // Convert the dates to UTC format
-      const start = adjustedStart.utc().format("YYYY-MM-DDTHH:mm:ss[Z]");
-      const end = adjustedEnd
-        .utc()
-        .endOf("day")
-        .format("YYYY-MM-DDTHH:mm:ss[Z]");
+  //     // Convert the dates to UTC format
+  //     const start = adjustedStart.utc().format("YYYY-MM-DDTHH:mm:ss[Z]");
+  //     const end = adjustedEnd
+  //       .utc()
+  //       .endOf("day")
+  //       .format("YYYY-MM-DDTHH:mm:ss[Z]");
 
         
-      console.log("Start Date (UTC): ", start);
-      console.log("End Date (UTC): ", end);
+  //     console.log("Start Date (UTC): ", start);
+  //     console.log("End Date (UTC): ", end);
 
-      if (adjustedStart && adjustedEnd) {
-        // Fetch the combined data API
-        fetch(
+  //     if (adjustedStart && adjustedEnd) {
+  //       // Fetch the combined data API
+  //       fetch(
       
              
-           `${baseUrl}/apipsd/parking/parkingData?parking=${parkingName}&startDate=${start}&endDate=${end}`, {method : "GET"})
+  //          `${baseUrl}/apipsd/parking/parkingData?parking=${parkingName}&startDate=${start}&endDate=${end}`, {method : "GET"})
      
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Received Traffic Data: ", data); // Log the data received
-            setTrafficData(data); // Update the traffic data with the new data from the server
-          })
-          .catch((error) => console.error("Error fetching dataset:", error));
-      } else {
-        console.error("Adjusted start or end date is invalid");
-      }
-    }
-  }, [selectedGroup, dateRange]); // This will trigger whenever either selectedGroup or dateRange changes
+  //         .then((response) => response.json())
+  //         .then((data) => {
+  //           console.log("Received Traffic Data: ", data); // Log the data received
+  //           setTrafficData(data); // Update the traffic data with the new data from the server
+  //         })
+  //         .catch((error) => console.error("Error fetching dataset:", error));
+  //     } else {
+  //       console.error("Adjusted start or end date is invalid");
+  //     }
+  //   }
+  // }, [selectedGroup, dateRange]); // This will trigger whenever either selectedGroup or dateRange changes
+
+
+
+
+
+// Function to fetch traffic data (moved out of useEffect)
+const fetchTrafficData = () => {
+  if (selectedGroup && dateRange.startDate && dateRange.endDate) {
+    const parkingName = encodeURIComponent(selectedGroup.value);
+
+    // Adjust the time based on your logic
+    const adjustTime = (date) => {
+      if (!date) return null;
+      return moment.utc(date).add(5, "hours");
+    };
+
+    // Adjusted dates with 5 hours added
+    const adjustedStart = adjustTime(dateRange.startDate);
+    const adjustedEnd = adjustTime(dateRange.endDate);
+
+    // Convert the dates to UTC format
+    const start = adjustedStart.utc().format("YYYY-MM-DDTHH:mm:ss[Z]");
+    const end = adjustedEnd.utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss[Z]");
+
+    fetch(`${baseUrl}/apipsd/parking/parkingData?parking=${parkingName}&startDate=${start}&endDate=${end}`, { method: "GET" })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Received Traffic Data: ", data);
+        setTrafficData(data);
+      })
+      .catch((error) => console.error("Error fetching dataset:", error));
+  }
+};
+
+// Call API initially when dependencies change
+useEffect(() => {
+  fetchTrafficData();
+}, [selectedGroup, dateRange]);
+
+// Function for Pay Now button (calls API again)
+const MainApi = () => {
+  fetchTrafficData(); // Calls API again with existing data when Pay Now is clicked
+};
+
+
+
+
+
+
+
+
 
   const getLayout = () => {
     switch (props.layout.layoutType) {
@@ -189,6 +240,7 @@ const App = (props) => {
                   trafficData={trafficData}
                   refreshTollPlazaData={refreshTollPlazaData}
                   onDateChange={handleDateChange}
+                 MainApi={MainApi}
                 >
                   <Authmiddleware>
                     {React.cloneElement(route.component, {
@@ -197,7 +249,7 @@ const App = (props) => {
                       handleSelectGroup,
                       trafficData,
                       refreshTollPlazaData,
-
+                     MainApi,
                       onDateChange: handleDateChange,
                     })}
                   </Authmiddleware>

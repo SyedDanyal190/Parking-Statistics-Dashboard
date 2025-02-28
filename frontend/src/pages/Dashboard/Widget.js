@@ -2,15 +2,17 @@ import React from "react";
 import CountUp from "react-countup";
 import { Card, CardBody, Col, Row } from "reactstrap";
 
-const Widget = ({ trafficData ,}) => {
+const Widget = ({ trafficData }) => {
   // const { result1, vehicleCount, highestDuration, averageCost } =
   //   trafficData || {};
 
-  const { result1, vehicleCount, highestDuration } =
+  const { result1, highestDuration } =
     trafficData || {};
 
 
-    const { totalCost, averageCosting } = result1 || {}; 
+    const { totalCost, averageCosting , vehicleCount} = result1 || {}; 
+
+    console.log("Vehicle Count::::::::::::vv;;;;;;v;v;v;;v;v;v;vv", vehicleCount);
 
 const  roundValue =  totalCost ? Math.round(totalCost * 100) / 100 : 0;
 let  formattedTotalCostValue  =  Number.isInteger(roundValue) ? roundValue : roundValue.toFixed(2);
@@ -36,7 +38,7 @@ Number.isInteger(formattedAverageCostValue)
   const widgetData = [
     {
       title: "Total Vehicle Count",
-      count: vehicleCount?.totalVehicles || 0,
+      count: vehicleCount ?? 0, 
       icon: "mdi mdi-car text-primary",
       color: "success",
     },
