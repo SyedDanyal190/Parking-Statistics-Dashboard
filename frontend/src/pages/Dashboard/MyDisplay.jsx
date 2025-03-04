@@ -76,12 +76,14 @@ const MyDisplay = ({ trafficData, MainApi }) => {
                 <th>Time Out</th>
                 <th>Parking Level</th>
                 <th>Parking Bay</th>
+                <th>Payment Due</th>
                 <th>Payment Status</th>
+                
               </tr>
             </thead>
             <tbody>
               {DisplayVehicleTime.map((entry, key) => {
-                console.log("Raw Entry:", entry);
+                // console.log("Raw Entry:", entry);
 
                 const regex =
                   /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+)/;
@@ -111,56 +113,84 @@ const MyDisplay = ({ trafficData, MainApi }) => {
                 const vehicleDisplay = `${capitalizedVehicleType} (${vehicleNumber})`;
 
                 // console.log("Extracted Values - TimeOut:", timeOut);
+                // console.log("Raw Time In:", timeIn, "Raw Time Out:", timeOut);
 
                 return (
-                  <tr key={key}>
-                    <td>{vehicleDisplay}</td>
-                    <td>{timeIn}</td>
-                    <td>{timeOut}</td>
-                    <td>{parkingLevel}</td>
-                    <td>{parkingBay}</td>
-                    {/* <td>
-                      {!timeOut || !timeOut.trim() ? (
+                  // <tr key={key}>
+                  //   <td>{vehicleDisplay}</td>
+                  //   <td>{timeIn}</td>
+                  //   <td>{timeOut}</td>
+                  //   <td>{parkingLevel}</td>
+                  //   <td>{parkingBay}</td>
+                  //   <td></td>
+                  //   {/* <td>
+                  //     {!timeOut || !timeOut.trim() ? (
                         
-                        <button onClick={() => handlePayNow(key)}>Pay Now</button>
-                        // <button onClick={handlePayNow(key)} className="btn btn-primary btn-sm">
-                        //   Pay Now
-                        // </button>
-                      // ) : (
-                      //   <button onClick={() => handlePayNow(key)}>Pay Now</button>
-                      // ) }
+                  //       <button onClick={() => handlePayNow(key)}>Pay Now</button>
+                  //       // <button onClick={handlePayNow(key)} className="btn btn-primary btn-sm">
+                  //       //   Pay Now
+                  //       // </button>
+                  //     // ) : (
+                  //     //   <button onClick={() => handlePayNow(key)}>Pay Now</button>
+                  //     // ) }
+                  //   ) : (
+                  //       `$${cost} Paid`
+                  //    )} 
+                  //   </td> */}
+                  //   <td>
+                  //     {/* {console.log("Checking TimeOut for Row:", timeOut)} */}
+                  //     {!timeOut || timeOut.trim() === "" || timeOut === "" ? (
+                  //       <>
+                  //         {console.log(
+                  //           "Showing Pay Now button for:",
+                  //           vehicleNumber
+                  //         )}
+                  //         <button
+                  //           onClick={() =>
+                  //             handlePayNow(key, vehicleNumber, timeIn)
+                  //           }
+                  //           className="btn btn-primary btn-sm"
+                  //         >
+                  //           Pay Now
+                  //         </button>
+                  //       </>
+                  //     ) : (
+                  //       <>
+                  //         {console.log(
+                  //           "Showing Paid status for:",
+                  //           vehicleNumber
+                  //         )}
+                  //         `${cost || "0"} Paid`
+                  //       </>
+                  //     )}
+                  //   </td>
+                  // </tr>
+                
+                  <tr key={key}>
+                  <td>{vehicleDisplay}</td>
+                  <td>{moment(timeIn, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")}</td>
+                  <td>{timeOut ? moment(timeOut, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm  A") : ""}</td>
+                  <td>{parkingLevel}</td>
+                  <td>{parkingBay}</td>
+                  <td>
+                    {!timeOut?.trim() ? (
+                      <>
+                        <button
+                          onClick={() => handlePayNow(key, vehicleNumber, timeIn)}
+                          className="btn btn-primary btn-sm"
+                        >
+                          Pay Now
+                        </button>
+                      </>
                     ) : (
-                        `$${cost} Paid`
-                     )} 
-                    </td> */}
-                    <td>
-                      {/* {console.log("Checking TimeOut for Row:", timeOut)} */}
-                      {!timeOut || timeOut.trim() === "" || timeOut === "" ? (
-                        <>
-                          {console.log(
-                            "Showing Pay Now button for:",
-                            vehicleNumber
-                          )}
-                          <button
-                            onClick={() =>
-                              handlePayNow(key, vehicleNumber, timeIn)
-                            }
-                            className="btn btn-primary btn-sm"
-                          >
-                            Pay Now
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          {console.log(
-                            "Showing Paid status for:",
-                            vehicleNumber
-                          )}
-                          `${cost || "0"} Paid`
-                        </>
-                      )}
-                    </td>
-                  </tr>
+                      <>
+                        {`${cost || "0"} Paid`}
+                      </>
+                    )}
+                  </td>
+                </tr>
+                
+                
                 );
               })}
             </tbody>

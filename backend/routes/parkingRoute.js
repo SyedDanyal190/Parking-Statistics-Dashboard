@@ -194,13 +194,13 @@ const formatParkingDataOtherValues = (
 
           if (matchedTimeout) {
             timeOut = matchedTimeout.timeOut;
-            console.log(
-              `✅ Applied updated timeout for ${entry.vehicleNumber}: ${timeOut}`
-            );
+            // console.log(
+            //   `✅ Applied updated timeout for ${entry.vehicleNumber}: ${timeOut}`
+            // );
           } else {
-            console.log(
-              `❌ No updated timeout for vehicle: ${entry.vehicleNumber}, Skipping...`
-            );
+            // console.log(
+            //   `❌ No updated timeout for vehicle: ${entry.vehicleNumber}, Skipping...`
+            // );
             return; // Skip this entry
           }
         }
@@ -278,13 +278,13 @@ const calculateDurationByIntervals = (
 
       if (matchedTimeout) {
         timeOut = matchedTimeout.timeOut;
-        console.log(
-          `✅ Applied updated timeout for ${vehicle.vehicleNumber}: ${timeOut}`
-        );
+        // console.log(
+        //   `✅ Applied updated timeout for ${vehicle.vehicleNumber}: ${timeOut}`
+        // );
       } else {
-        console.log(
-          `❌ No updated timeout for vehicle: ${vehicle.vehicleNumber}, Skipping...`
-        );
+        // console.log(
+        //   `❌ No updated timeout for vehicle: ${vehicle.vehicleNumber}, Skipping...`
+        // );
         return; // Skip this entry
       }
     }
@@ -572,6 +572,202 @@ const formatParkingData122 = (data2, startDate, endDate, updatedTimeOuts) => {
   }
 };
 
+// const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+//   const result = {};
+
+//   if (start.toISOString().split("T")[0] === end.toISOString().split("T")[0]) {
+//     const dateKey = start.toISOString().split("T")[0];
+
+//     if (!result[dateKey]) {
+//       result[dateKey] = generateHourRanges().reduce((acc, hour) => {
+//         acc[hour] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//           vehicles: {},
+//         };
+//         return acc;
+//       }, {});
+//     }
+
+//     vehicles.forEach((vehicle) => {
+//       let timeOut = vehicle.timeOut; // Original timeOut
+
+//       // ✅ If timeOut is missing, check updatedTimeOuts
+//       if (!timeOut) {
+//         const matchedTimeout = Object.values(updatedTimeOuts).find(
+//           (item) =>
+//             item.vehicleNumber === vehicle.vehicleNumber &&
+//             item.timeIn === vehicle.timeIn
+//         );
+
+//         if (matchedTimeout) {
+//           timeOut = matchedTimeout.timeOut;
+//           // console.log(
+//           //   `✅ Applied updated timeout for ${vehicle.vehicleNumber}: ${timeOut}`
+//           // );
+//         } else {
+//           // console.log(
+//           //   `❌ No updated timeout for vehicle: ${vehicle.vehicleNumber}, Skipping...`
+//           // );
+//           return; // Skip this vehicle
+//         }
+//       }
+
+//       const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+//       timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
+//       const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
+//       const vehicleType = vehicle.vehicleType.toLowerCase();
+
+//       if (
+//         timeIn.toISOString().split("T")[0] === dateKey ||
+//         timeOut.toISOString().split("T")[0] === dateKey
+//       ) {
+//         generateHourRanges().forEach((hourRange) => {
+//           const standardizedRange = hourRange.replace("-00:00", "-24:00");
+//           const [hourStart, hourEnd] = standardizedRange
+//             .split("-")
+//             .map((time) => parseInt(time.split(":")[0]));
+
+//           const vehicleStartHour = getHour(vehicle.timeIn);
+//           const vehicleEndHour = getHour(timeOut);
+
+//           if (
+//             (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
+//             (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
+//           ) {
+//             result[dateKey][hourRange].total += 1;
+//             result[dateKey][hourRange][vehicleType] += 1;
+
+//             if (!result[dateKey][hourRange].vehicles[vehicleType]) {
+//               result[dateKey][hourRange].vehicles[vehicleType] = {
+//                 totalDuration: 0,
+//                 count: 0,
+//               };
+//             }
+
+//             result[dateKey][hourRange].vehicles[vehicleType].totalDuration +=
+//               duration;
+//             result[dateKey][hourRange].vehicles[vehicleType].count += 1;
+//           }
+//         });
+//       }
+//     });
+
+//     // Convert stored durations to averages
+//     Object.keys(result[dateKey]).forEach((hourRange) => {
+//       const vehicleData = result[dateKey][hourRange].vehicles;
+//       result[dateKey][hourRange].vehicles = Object.keys(vehicleData).map(
+//         (type) => ({
+//           type,
+//           duration: parseFloat(
+//             (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(
+//               1
+//             )
+//           ),
+//           avgDuration: parseFloat(
+//             (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(
+//               1
+//             )
+//           ),
+//         })
+//       );
+//     });
+//   } else {
+//     for (
+//       let currentDate = new Date(start);
+//       currentDate <= end;
+//       currentDate.setDate(currentDate.getDate() + 1)
+//     ) {
+//       const dateKey = currentDate.toISOString().split("T")[0];
+
+//       if (!result[dateKey]) {
+//         result[dateKey] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//           vehicles: {},
+//         };
+//       }
+
+//       vehicles.forEach((vehicle) => {
+//         let timeOut = vehicle.timeOut; // Original timeOut
+
+//         // ✅ If timeOut is missing, check updatedTimeOuts
+//         if (!timeOut) {
+//           const matchedTimeout = Object.values(updatedTimeOuts).find(
+//             (item) =>
+//               item.vehicleNumber === vehicle.vehicleNumber &&
+//               item.timeIn === vehicle.timeIn
+//           );
+
+//           if (matchedTimeout) {
+//             timeOut = matchedTimeout.timeOut;
+//             // console.log(
+//             //   `✅ Applied updated timeout for ${vehicle.vehicleNumber}: ${timeOut}`
+//             // );
+//           } else {
+//             // console.log(
+//             //   `❌ No updated timeout for vehicle: ${vehicle.vehicleNumber}, Skipping...`
+//             // );
+//             return; // Skip this vehicle
+//           }
+//         }
+
+//         const timeIn = moment
+//           .utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A")
+//           .toDate();
+//         timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
+//         const duration = (timeOut - timeIn) / 60000;
+//         const vehicleType = vehicle.vehicleType.toLowerCase();
+
+//         if (
+//           timeIn <= end &&
+//           timeOut >= start &&
+//           new Date(dateKey).setUTCHours(0, 0, 0, 0) <= timeOut.getTime() &&
+//           new Date(dateKey).setUTCHours(23, 59, 59, 999) >= timeIn.getTime()
+//         ) {
+//           result[dateKey].total += 1;
+//           result[dateKey][vehicleType] += 1;
+
+//           if (!result[dateKey].vehicles[vehicleType]) {
+//             result[dateKey].vehicles[vehicleType] = {
+//               totalDuration: 0,
+//               count: 0,
+//             };
+//           }
+
+//           result[dateKey].vehicles[vehicleType].totalDuration += duration;
+//           result[dateKey].vehicles[vehicleType].count += 1;
+//         }
+//       });
+
+//       // Convert stored durations to averages
+//       const vehicleData = result[dateKey].vehicles;
+//       result[dateKey].vehicles = Object.keys(vehicleData).map((type) => ({
+//         type,
+//         duration: parseFloat(
+//           (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
+//         ),
+//         avgDuration: parseFloat(
+//           (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
+//         ),
+//       }));
+//     }
+//   }
+
+//   return result;
+// };
+
+
 const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -596,9 +792,8 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
     }
 
     vehicles.forEach((vehicle) => {
-      let timeOut = vehicle.timeOut; // Original timeOut
+      let timeOut = vehicle.timeOut;
 
-      // ✅ If timeOut is missing, check updatedTimeOuts
       if (!timeOut) {
         const matchedTimeout = Object.values(updatedTimeOuts).find(
           (item) =>
@@ -608,21 +803,20 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
 
         if (matchedTimeout) {
           timeOut = matchedTimeout.timeOut;
-          console.log(
-            `✅ Applied updated timeout for ${vehicle.vehicleNumber}: ${timeOut}`
-          );
         } else {
-          console.log(
-            `❌ No updated timeout for vehicle: ${vehicle.vehicleNumber}, Skipping...`
-          );
-          return; // Skip this vehicle
+          return;
         }
       }
 
-      const timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+      let timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
       timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
-      const duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
       const vehicleType = vehicle.vehicleType.toLowerCase();
+
+      // Ensure duration is only for the specific day
+      let dailyDuration = Math.min(
+        (timeOut - timeIn) / 60000,
+        1440 - timeIn.getUTCHours() * 60 - timeIn.getUTCMinutes()
+      );
 
       if (
         timeIn.toISOString().split("T")[0] === dateKey ||
@@ -652,14 +846,13 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
             }
 
             result[dateKey][hourRange].vehicles[vehicleType].totalDuration +=
-              duration;
+              dailyDuration;
             result[dateKey][hourRange].vehicles[vehicleType].count += 1;
           }
         });
       }
     });
 
-    // Convert stored durations to averages
     Object.keys(result[dateKey]).forEach((hourRange) => {
       const vehicleData = result[dateKey][hourRange].vehicles;
       result[dateKey][hourRange].vehicles = Object.keys(vehicleData).map(
@@ -699,9 +892,8 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
       }
 
       vehicles.forEach((vehicle) => {
-        let timeOut = vehicle.timeOut; // Original timeOut
+        let timeOut = vehicle.timeOut;
 
-        // ✅ If timeOut is missing, check updatedTimeOuts
         if (!timeOut) {
           const matchedTimeout = Object.values(updatedTimeOuts).find(
             (item) =>
@@ -711,29 +903,30 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
 
           if (matchedTimeout) {
             timeOut = matchedTimeout.timeOut;
-            console.log(
-              `✅ Applied updated timeout for ${vehicle.vehicleNumber}: ${timeOut}`
-            );
           } else {
-            console.log(
-              `❌ No updated timeout for vehicle: ${vehicle.vehicleNumber}, Skipping...`
-            );
-            return; // Skip this vehicle
+            return;
           }
         }
 
-        const timeIn = moment
-          .utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A")
-          .toDate();
+        let timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
         timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
-        const duration = (timeOut - timeIn) / 60000;
         const vehicleType = vehicle.vehicleType.toLowerCase();
+
+        let dailyStart = new Date(dateKey);
+        dailyStart.setUTCHours(0, 0, 0, 0);
+        let dailyEnd = new Date(dateKey);
+        dailyEnd.setUTCHours(23, 59, 59, 999);
+
+        let adjustedTimeIn = timeIn < dailyStart ? dailyStart : timeIn;
+        let adjustedTimeOut = timeOut > dailyEnd ? dailyEnd : timeOut;
+
+        let dailyDuration = (adjustedTimeOut - adjustedTimeIn) / 60000;
 
         if (
           timeIn <= end &&
           timeOut >= start &&
-          new Date(dateKey).setUTCHours(0, 0, 0, 0) <= timeOut.getTime() &&
-          new Date(dateKey).setUTCHours(23, 59, 59, 999) >= timeIn.getTime()
+          dailyStart.getTime() <= timeOut.getTime() &&
+          dailyEnd.getTime() >= timeIn.getTime()
         ) {
           result[dateKey].total += 1;
           result[dateKey][vehicleType] += 1;
@@ -745,12 +938,11 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
             };
           }
 
-          result[dateKey].vehicles[vehicleType].totalDuration += duration;
+          result[dateKey].vehicles[vehicleType].totalDuration += dailyDuration;
           result[dateKey].vehicles[vehicleType].count += 1;
         }
       });
 
-      // Convert stored durations to averages
       const vehicleData = result[dateKey].vehicles;
       result[dateKey].vehicles = Object.keys(vehicleData).map((type) => ({
         type,
@@ -766,6 +958,8 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
 
   return result;
 };
+
+
 
 router.get("/parkingNames", (req, res) => {
   fs.readdir(NewBaseDir, { withFileTypes: true }, (err, files) => {
@@ -887,6 +1081,9 @@ router.get("/parkingData", (req, res) => {
         updatedTimeOuts
       );
 
+
+      // console.log("resultsSameDate",resultSameDate)
+
       const combinedData = {
         dailyDurations,
         highestDuration,
@@ -973,9 +1170,9 @@ router.post("/updateTimeOut", async (req, res) => {
 
     // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
 
-    console.log(
-      `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
-    ); // Log values
+    // console.log(
+    //   `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+    // ); // Log values
 
     res.json({
       success: true,
