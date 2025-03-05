@@ -959,6 +959,60 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
   return result;
 };
 
+const findLongestParkingDuration = (data2, startDate, endDate, updatedTimeOuts) => {
+  try {
+    const parsedData = typeof data2 === "string" ? JSON.parse(data2) : data2;
+    if (!parsedData || Object.keys(parsedData).length === 0) {
+      return "No data available."; // No entries
+    }
+
+    const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
+    const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
+
+    let maxDuration = 0;
+    let longestEntry = null;
+
+    Object.values(parsedData).forEach((entry) => {
+      let timeOut = entry.timeOut;
+
+      // Check for updated timeout
+      const matchedTimeout = Object.values(updatedTimeOuts).find(
+        (item) =>
+          item.vehicleNumber === entry.vehicleNumber &&
+          item.timeIn === entry.timeIn
+      );
+
+      if (!timeOut && matchedTimeout) {
+        timeOut = matchedTimeout.timeOut;
+      }
+
+      if (!timeOut) return; // Skip if no timeout
+
+      const timeInMoment = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
+      const timeOutMoment = moment.utc(timeOut, "YYYY-MM-DD h:mm A");
+
+      const entryDate = timeInMoment.format("YYYY-MM-DD");
+      if (entryDate < startUTC || entryDate > endUTC) return; // Skip out-of-range entries
+
+      const duration = timeOutMoment.diff(timeInMoment, "minutes"); // Duration in minutes
+
+      if (duration > maxDuration) {
+        maxDuration = duration;
+        longestEntry = entry;
+      }
+    });
+
+    return longestEntry
+      ? `${longestEntry.vehicleType} ${longestEntry.vehicleNumber} had the longest stay of ${maxDuration} minutes at Level ${longestEntry.level}, Bay ${longestEntry.bay}.`
+      : "No valid entries found within the time range.";
+  } catch (error) {
+    console.error("Error processing data:", error);
+    return "Error processing data.";
+  }
+};
+
+
+
 
 
 router.get("/parkingNames", (req, res) => {
@@ -1043,6 +1097,10 @@ router.get("/parkingData", (req, res) => {
         updatedTimeOuts
       );
 
+ 
+    const  result13 =  findLongestParkingDuration(data ,  dynamicStartDate1 , dynamicEndDate1,  updatedTimeOuts  );
+    
+
       // const result11 = formatParkingData11(data,dynamicStartDate, dynamicEndDate);
       const vehicleCount = countVehicles(
         dynamicStartDate,
@@ -1097,6 +1155,7 @@ router.get("/parkingData", (req, res) => {
         result1,
         result11,
         result12,
+        result13,
       };
 
       // res.json(parsedData);

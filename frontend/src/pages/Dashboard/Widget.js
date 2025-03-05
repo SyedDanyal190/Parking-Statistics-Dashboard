@@ -9,14 +9,12 @@
 //   const { result1, highestDuration } =
 //     trafficData || {};
 
-
-//     const { totalCost, averageCosting , vehicleCount} = result1 || {}; 
+//     const { totalCost, averageCosting , vehicleCount} = result1 || {};
 
 //     console.log("Vehicle Count::::::::::::vv;;;;;;v;v;v;;v;v;v;vv", vehicleCount);
 
 // const  roundValue =  totalCost ? Math.round(totalCost * 100) / 100 : 0;
 // let  formattedTotalCostValue  =  Number.isInteger(roundValue) ? roundValue : roundValue.toFixed(2);
-
 
 //   // Format the average cost similarly
 // // const formattedAverageCostValue =
@@ -29,7 +27,6 @@
 //   ? Math.round(averageCosting * 100) / 100 // Round to two decimal places
 //   : 0;
 
-
 // let formattedAvgCost =
 // Number.isInteger(formattedAverageCostValue)
 //   ? formattedAverageCostValue
@@ -38,7 +35,7 @@
 //   const widgetData = [
 //     {
 //       title: "Total Vehicle Count",
-//       count: vehicleCount ?? 0, 
+//       count: vehicleCount ?? 0,
 //       icon: "mdi mdi-car text-primary",
 //       color: "success",
 //     },
@@ -48,7 +45,6 @@
 //       // count: totalcost || 0,
 //       // count: `$${totalcost || 0}`,
 //       count  :  `$${formattedTotalCostValue}`,
-    
 
 //       // icon: "mdi mdi-cash-multiple text-success",
 //       color: "warning",
@@ -78,13 +74,11 @@
 //       //   averageCost !== undefined && averageCost !== null
 //       //     ? `$${Math.round(averageCost)}` // Round the value before adding "$"
 //       //     : "$0", // Show "$0" if averageCost is missing
-     
-     
+
 //           count: `$${formattedAvgCost}`,
 //           icon: "mdi mdi-account-group text-primary", // Icon for the new box
 //       color: "secondary", // Color for the new box
 //     },
-    
 
 //   ];
 
@@ -133,11 +127,6 @@
 
 // export default Widget;
 
-
-
-
-
-
 // import React from "react";
 // import CountUp from "react-countup";
 // import { Card, CardBody, Col, Row } from "reactstrap";
@@ -179,7 +168,7 @@
 //       icon: "mdi mdi-clock text-primary",
 //       color: "primary",
 //     },
-  
+
 //   ];
 
 //   return (
@@ -222,7 +211,7 @@
 //   <Row className="align-items-center">
 //     <Col className="text-center border-end">
 //       <div className="d-flex flex-column align-items-center">
-    
+
 //         <p className="text-muted text-uppercase fw-semibold font-size-13">
 //           Average Cost (Left)
 //         </p>
@@ -234,7 +223,7 @@
 
 //     <Col className="text-center">
 //       <div className="d-flex flex-column align-items-center">
-   
+
 //         <p className="text-muted text-uppercase fw-semibold font-size-13">
 //           Average Cost (Right)
 //         </p>
@@ -245,8 +234,6 @@
 //     </Col>
 //   </Row>
 // </CardBody>
-
-
 
 //           </Card>
 //         </Col>
@@ -262,8 +249,19 @@ import CountUp from "react-countup";
 import { Card, CardBody, Col, Row } from "reactstrap";
 
 const Widget = ({ trafficData }) => {
-  const { result1, highestDuration } = trafficData || {};
+  const { result1, highestDuration ,result13 } = trafficData || {};
   const { totalCost, averageCosting, vehicleCount } = result1 || {};
+
+console.log("result13", result13);
+
+const getLevel = (text) => {
+  if (!text) return "No data available";
+  const match = String(text).match(/Level (\d+)/); 
+  return match ? match[1] : "No level found";
+};
+
+const level = result13 ? getLevel(result13) : "No data available";
+
 
   const roundValue = totalCost ? Math.round(totalCost * 100) / 100 : 0;
   let formattedTotalCostValue = Number.isInteger(roundValue)
@@ -305,30 +303,57 @@ const Widget = ({ trafficData }) => {
           </Card>
         </Col>
 
-        {/* Combined Total Cost & Average Cost */}
-        <Col md={6} xl={3}>
-          <Card>
+        <Col md={6} xl={3}  >
+          <Card style={{ height: "115px" }}>
             <CardBody>
-              <Row className="align-items-center " >
+              <Row className="align-items-center"  style={{ display:"flex", flexWrap:"nowrap"}}>
+                {/* Total Costs Section */}
                 <Col className="text-center border-end">
-                  <div className="d-flex flex-column align-items-center ">
-                    <p className="text-muted text-uppercase fw-semibold font-size-13">
-                      Total Cost
-                    </p>
-                    <h4 className="mb-1">
-                      $<CountUp start={0} end={formattedTotalCostValue} duration={1.5} decimals={2} />
-                    </h4>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="text-start">
+                      <p className="text-muted text-uppercase fw-semibold font-size-13">
+                        Total Costs
+                      </p>
+                      <h4 className="mb-1">
+                        $
+                        <CountUp
+                          start={0}
+                          end={formattedTotalCostValue}
+                          duration={1.5}
+                          decimals={2}
+                        />
+                      </h4>
+                    </div>
+                    <div className="avatar-sm">
+                      <span className="avatar-title rounded-circle bg-light font-size-24 text-primary">
+                        <i className="mdi mdi-currency-usd text-primary"></i>
+                      </span>
+                    </div>
                   </div>
                 </Col>
 
+                {/* Average Cost Section */}
                 <Col className="text-center">
-                  <div className="d-flex flex-column align-items-center">
-                    <p className="text-muted text-uppercase fw-semibold font-size-13">
-                      Average Cost
-                    </p>
-                    <h4 className="mb-1">
-                      $<CountUp start={0} end={formattedAvgCost} duration={1.5} decimals={2} />
-                    </h4>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="text-start">
+                      <p className="text-muted text-uppercase fw-semibold font-size-13">
+                        Average Cost
+                      </p>
+                      <h4 className="mb-1">
+                        $
+                        <CountUp
+                          start={0}
+                          end={formattedAvgCost}
+                          duration={1.5}
+                          decimals={2}
+                        />
+                      </h4>
+                    </div>
+                    <div className="avatar-sm">
+                      <span className="avatar-title rounded-circle bg-light font-size-24 text-success">
+                        <i className="mdi mdi-cash-multiple text-primary"></i>
+                      </span>
+                    </div>
                   </div>
                 </Col>
               </Row>
@@ -359,38 +384,50 @@ const Widget = ({ trafficData }) => {
           </Card>
         </Col>
 
-
-   {/* Combined Total Cost & Average Cost */}
-   <Col md={6} xl={3}>
-          <Card>
+        {/* Combined Total Cost & Average Cost */}
+        <Col md={6} xl={3}>
+          <Card style={{ height: "115px" }}>
             <CardBody>
-              <Row className="align-items-center " >
+              <Row className="align-items-center">
+                {/* Total Costs Section */}
                 <Col className="text-center border-end">
-                  <div className="d-flex flex-column align-items-center ">
-                    <p className="text-muted text-uppercase fw-semibold font-size-13">
-                    Busiest Level
-                    </p>
-                    <h4 className="mb-1">
-                    2
-                    </h4>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="text-start">
+                      <p className="text-muted text-uppercase fw-semibold font-size-13">
+                        BUSIEST LEVEL
+                      </p>
+                      <h4 className="mb-1">
+                        {level}
+                      </h4>
+                    </div>
+                    <div className="avatar-sm">
+                      <span className="avatar-title rounded-circle bg-light font-size-24 text-primary">
+                        <i className="mdi mdi-floor-plan text-primary"></i>
+                      </span>
+                    </div>
                   </div>
                 </Col>
 
+                {/* Average Cost Section */}
                 <Col className="text-center">
-                  <div className="d-flex flex-column align-items-center">
-                    <p className="text-muted text-uppercase fw-semibold font-size-13">
-                      Busiest Way
-                    </p>
-                    <h4 className="mb-1">
-                      2
-                    </h4>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="text-start">
+                      <p className="text-muted text-uppercase fw-semibold font-size-13">
+                        BUSIEST WAY
+                      </p>
+                      <h4 className="mb-1"></h4>
+                    </div>
+                    <div className="avatar-sm">
+                      <span className="avatar-title rounded-circle bg-light font-size-24 text-success">
+                        <i className="mdi mdi-road text-primary"></i>
+                      </span>
+                    </div>
                   </div>
                 </Col>
               </Row>
             </CardBody>
           </Card>
         </Col>
-
       </Row>
     </React.Fragment>
   );
