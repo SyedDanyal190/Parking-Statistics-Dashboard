@@ -166,31 +166,56 @@ const MyDisplay = ({ trafficData, MainApi }) => {
                   //   </td>
                   // </tr>
                 
-                  <tr key={key}>
-                  <td>{vehicleDisplay}</td>
-                  <td>{moment(timeIn, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")}</td>
-                  <td>{timeOut ? moment(timeOut, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm  A") : ""}</td>
-                  <td>{parkingLevel}</td>
-                  <td>{parkingBay}</td>
-                  <td>
-                    {!timeOut?.trim() ? (
-                      <>
-                        <button
-                          onClick={() => handlePayNow(key, vehicleNumber, timeIn)}
-                          className="btn btn-primary btn-sm"
-                        >
-                          Pay Now
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        {`${cost || "0"} Paid`}
-                      </>
-                    )}
-                  </td>
-                </tr>
+                //   <tr key={key}>
+                //   <td>{vehicleDisplay}</td>
+                //   <td>{moment(timeIn, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")}</td>
+                //   <td>{timeOut ? moment(timeOut, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm  A") : ""}</td>
+                //   <td>{parkingLevel}</td>
+                //   <td>{parkingBay}</td>
+                //   <td></td>
+                //   <td>
+                //     {!timeOut?.trim() ? (
+                //       <>
+                //         <button
+                //           onClick={() => handlePayNow(key, vehicleNumber, timeIn)}
+                //           className="btn btn-primary btn-sm"
+                //         >
+                //           Pay Now
+                //         </button>
+                //       </>
+                //     ) : (
+                //       <>
+                //         {`${cost || "0"} Paid`}
+                //       </>
+                //     )}
+                //   </td>
+                // </tr>
                 
                 
+<tr key={key}>
+  <td>{vehicleDisplay}</td>
+  <td>{moment(timeIn, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")}</td>
+  <td>{timeOut ? moment(timeOut, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A") : ""}</td>
+  <td>{parkingLevel}</td>
+  <td>{parkingBay}</td>
+  <td>{cost ? `$${cost}` : ""}</td>  {/* Payment Due column */}
+  <td>
+    {!timeOut?.trim() ? (
+      <button
+        onClick={() => handlePayNow(key, vehicleNumber, timeIn)}
+        className="btn btn-primary btn-sm"
+      >
+        Pay Now
+      </button>
+    ) : (
+      "Paid"
+    )}
+  </td>
+</tr>
+
+
+
+
                 );
               })}
             </tbody>

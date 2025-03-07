@@ -260,8 +260,15 @@ const getLevel = (text) => {
   return match ? match[1] : "No level found";
 };
 
-const level = result13 ? getLevel(result13) : "No data available";
 
+const  getBay = (text) =>{
+    if(!text) return  "NO data available";
+    const  match =  String(text).match(/Bay (\d+)/); 
+    return match ?  match[1] : "No bay found";
+}  
+
+const level = result13 ? getLevel(result13) : "No data available";
+const  Bay  =  result13 ? getBay(result13)  : "No data available";
 
   const roundValue = totalCost ? Math.round(totalCost * 100) / 100 : 0;
   let formattedTotalCostValue = Number.isInteger(roundValue)
@@ -413,9 +420,9 @@ const level = result13 ? getLevel(result13) : "No data available";
                   <div className="d-flex align-items-center justify-content-between">
                     <div className="text-start">
                       <p className="text-muted text-uppercase fw-semibold font-size-13">
-                        BUSIEST WAY
+                        BUSIEST BAY
                       </p>
-                      <h4 className="mb-1">0</h4>
+                      <h4 className="mb-1">{Bay}</h4>
                     </div>
                     <div className="avatar-sm">
                       <span className="avatar-title rounded-circle bg-light font-size-24 text-success">
