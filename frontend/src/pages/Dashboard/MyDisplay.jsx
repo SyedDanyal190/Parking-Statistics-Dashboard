@@ -205,7 +205,7 @@ const MyDisplay = ({ trafficData, MainApi }) => {
         onClick={() => handlePayNow(key, vehicleNumber, timeIn)}
         className="btn btn-primary btn-sm"
       >
-        Pay Now
+        Calculate Now 
       </button>
     ) : (
       "Paid"
