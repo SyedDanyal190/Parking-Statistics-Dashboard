@@ -572,6 +572,78 @@ const formatParkingData122 = (data2, startDate, endDate, updatedTimeOuts) => {
   }
 };
 
+
+
+const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
+  // console.log(
+  //   "Received updatedTimeOuts inside formatParkingData122:",
+  //   updatedTimeOuts
+  // );
+
+  try {
+    const parsedData = typeof data2 === "string" ? JSON.parse(data2) : data2;
+    if (!parsedData || Object.keys(parsedData).length === 0) {
+      return [];
+    }
+
+    // console.log("Updated TimeOuts before processing:", updatedTimeOuts);
+
+    const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
+    const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
+    const Rate = 5; // Cost per minute
+
+    return Object.values(parsedData)
+      .sort(
+        (a, b) =>
+          moment.utc(a.timeIn, "YYYY-MM-DD h:mm A").valueOf() -
+          moment.utc(b.timeIn, "YYYY-MM-DD h:mm A").valueOf()
+      ) // Sort by timeIn
+      .filter((entry) => {
+        const entryDate = moment
+          .utc(entry.timeIn, "YYYY-MM-DD h:mm A")
+          .format("YYYY-MM-DD");
+        return entryDate >= startUTC && entryDate <= endUTC;
+      })
+      .map((entry) => {
+        let timeOut = entry.timeOut;
+
+        // ✅ Find the timeout in `updatedTimeOuts` using vehicleNumber & timeIn
+        const matchedTimeout = Object.values(updatedTimeOuts).find(
+          (item) =>
+            item.vehicleNumber === entry.vehicleNumber &&
+            item.timeIn === entry.timeIn
+        );
+
+        if (!timeOut && matchedTimeout) {
+          timeOut = matchedTimeout.timeOut;
+          console.log(
+            `✅ Applied updated timeout for ${entry.vehicleNumber}: ${timeOut}`
+          );
+        } else if (!timeOut) {
+          console.log(
+            `❌ No updated timeout for vehicle: ${entry.vehicleNumber}`
+          );
+        }
+
+        let cost = "";
+        if (timeOut) {
+          const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
+          // const timeOutMoment = moment.utc(timeOut, "ddd MMM DD YYYY HH:mm:ss [GMT]Z"); // Parse the new format
+          const timeOutMoment = moment.utc(timeOut, "YYYY-MM-DD h:mm A");
+          const durationInMinutes = timeOutMoment.diff(timeIn, "minutes");
+          cost = (durationInMinutes * Rate).toFixed(2);
+        }
+
+        return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}`;
+      });
+  } catch (error) {
+    console.error("Error parsing data:", error);
+    throw new Error("Invalid JSON data");
+  }
+};
+
+
+
 // const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
 //   const start = new Date(startDate);
 //   const end = new Date(endDate);
@@ -1097,6 +1169,8 @@ router.get("/parkingData", (req, res) => {
         updatedTimeOuts
       );
 
+    const  result1233 = formatParkingData12233(data , dynamicStartDate1 , dynamicEndDate1 , updatedTimeOutsCalculate );
+
  
     const  result13 =  findLongestParkingDuration(data ,  dynamicStartDate1 , dynamicEndDate1,  updatedTimeOuts  );
     
@@ -1140,8 +1214,9 @@ router.get("/parkingData", (req, res) => {
       );
 
 
-      // console.log("resultsSameDate",resultSameDate)
-
+    
+       console.log("result of   12",result12);
+       console.log("result  of  1233", result1233) 
       const combinedData = {
         dailyDurations,
         highestDuration,
@@ -1155,6 +1230,7 @@ router.get("/parkingData", (req, res) => {
         result1,
         result11,
         result12,
+        result1233,
         result13,
       };
 
@@ -1213,15 +1289,23 @@ router.post("/upload", upload.single("data.json"), (req, res) => {
 });
 
 const updatedTimeOuts = {}; // Store updated timeouts globally
-
+const  updatedTimeOutsCalculate = {}; 
 router.post("/updateTimeOut", async (req, res) => {
   try {
     const { key, timeOut, vehicleNumber, timeIn } = req.body;
 
-    if (!key || !timeOut) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing key or timeOut value." });
+    // if (!key || !timeOut) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Missing key or timeOut value." });
+    // }
+
+
+    if (key === undefined || key === null || !timeOut) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing key or timeOut value.",
+      });
     }
 
     // updatedTimeOuts[key] = timeOut; // Store new timeout
@@ -1243,5 +1327,45 @@ router.post("/updateTimeOut", async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
+
+
+router.post("/updateTimeOut/calculatenow", async (req, res) => {
+  try {
+    const { key, timeOut, vehicleNumber, timeIn } = req.body;
+
+    // if (!key || !timeOut) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Missing key or timeOut value." });
+    // }
+
+    if (key === undefined || key === null || !timeOut) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing key or timeOut value.",
+      });
+    }
+
+
+    // updatedTimeOuts[key] = timeOut; // Store new timeout
+    updatedTimeOutsCalculate[key] = { timeOut, vehicleNumber, timeIn };
+
+    // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
+
+    console.log(
+      `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+    ); // Log values
+
+    res.json({
+      success: true,
+      message: "Timeout updated successfully",
+      updatedData:updatedTimeOutsCalculate,
+    });
+  } catch (error) {
+    console.error("Error updating timeout:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
 
 module.exports = router;

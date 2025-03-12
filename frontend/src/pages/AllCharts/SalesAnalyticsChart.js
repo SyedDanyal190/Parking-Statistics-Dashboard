@@ -957,8 +957,8 @@ chart: {
     },
   };
 
-  console.log("filtered Data",filteredSeries);
-  console.log("chartdTAA series Data",chartData);
+  // console.log("filtered Data",filteredSeries);
+  // console.log("chartdTAA series Data",chartData);
   
   return (
 
