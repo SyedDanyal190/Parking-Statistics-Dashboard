@@ -93,10 +93,22 @@ const App = (props) => {
   }, []);
 
   // Function to handle the selection of a toll plaza folder
+  // const handleSelectGroup = (selectedOption) => {
+  //   // console.log('Selected Folder: ', selectedOption); // Log the selected folder
+  //   setSelectedGroup(selectedOption); // Set the selected toll plaza folder
+  // };
+
   const handleSelectGroup = (selectedOption) => {
-    // console.log('Selected Folder: ', selectedOption); // Log the selected folder
     setSelectedGroup(selectedOption); // Set the selected toll plaza folder
+  
+    // Reset date range to today's date when parking is changed
+    setDateRange({
+      startDate: moment.utc().startOf("day").subtract(5, "hours").toDate(),
+      endDate: moment.utc().endOf("day").subtract(5, "hours").toDate(),
+    });
   };
+  
+
 
   // useEffect(() => {
   //   console.log("Date Range Changed:", dateRange); // Log to verify the date range when it changes

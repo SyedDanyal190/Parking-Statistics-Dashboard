@@ -774,162 +774,436 @@ const filteredSeries = [
         },
       ],
  
-    tooltip: {
-        shared: true,
-        intersect: false,
-        custom: function({ series, seriesIndex, dataPointIndex, w }) {
-            let xLabel = w.globals.categoryLabels[dataPointIndex] || w.globals.labels[dataPointIndex];
+//     tooltip: {
+//         shared: true,
+//         intersect: false,
+//         custom: function({ series, seriesIndex, dataPointIndex, w }) {
+//             let xLabel = w.globals.categoryLabels[dataPointIndex] || w.globals.labels[dataPointIndex];
         
-            // Tooltip color mapping using colorMapping
-            const colorMapping = {
-                car: "#d9534f", // Red
-                truck: "#5bc0de", // Blue
-                bus: "#f0ad4e", // Yellow
-                van: "#5cb85c", // Green
-                motorbike: "#9370DB", // Purple
-                totalDuration: "#007bff", // Blue
-            };
+//             // Tooltip color mapping using colorMapping
+//             const colorMapping = {
+//                 car: "#d9534f", // Red
+//                 truck: "#5bc0de", // Blue
+//                 bus: "#f0ad4e", // Yellow
+//                 van: "#5cb85c", // Green
+//                 motorbike: "#9370DB", // Purple
+//                 totalDuration: "#007bff", // Blue
+//             };
     
-            let tooltipHtml = '<div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">';
+//             let tooltipHtml = '<div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">';
         
-            // Display the X-axis value (time range)
-            tooltipHtml += `<strong style="color: #333;">${xLabel}</strong><br/>`;
+//             // Display the X-axis value (time range)
+//             tooltipHtml += `<strong style="color: #333;">${xLabel}</strong><br/>`;
         
-            // Check if we are dealing with a single day or multiple days
-            const isSingleDay = dateKeys.length === 1;
+//             // Check if we are dealing with a single day or multiple days
+//             const isSingleDay = dateKeys.length === 1;
         
-            // Flag to check if vehicle data has been added already
-            let vehicleDataAdded = false;
+//             // Flag to check if vehicle data has been added already
+//             let vehicleDataAdded = false;
         
-            // If it's a single day, show the first tooltip
-            if (isSingleDay) {
-                // Keep track of separate vehicle type indices (car, van, bus, etc.)
-                const vehicleTypeIndices = {
-                    car: 1,
-                    truck: 1,
-                    van: 1,
-                    bus: 1,
-                    motorbike: 1
-                };
+//             // If it's a single day, show the first tooltip
+//             if (isSingleDay) {
+//                 // Keep track of separate vehicle type indices (car, van, bus, etc.)
+//                 const vehicleTypeIndices = {
+//                     car: 1,
+//                     truck: 1,
+//                     van: 1,
+//                     bus: 1,
+//                     motorbike: 1
+//                 };
         
-                // Store the vehicles already shown to avoid repeating them
-                const shownVehicles = new Set();
+//                 // Store the vehicles already shown to avoid repeating them
+//                 const shownVehicles = new Set();
         
-                // Loop through series and append values
-                series.forEach((s, i) => {
-                    const value = s[dataPointIndex];
-                    if (value !== 0) {
+//                 // Loop through series and append values
+//                 series.forEach((s, i) => {
+//                     const value = s[dataPointIndex];
+//                     if (value !== 0) {
 
-                      let roundedValue = Math.round(value * 100) / 100; // Rounds to 2 decimal places
-                      let formattedValue = Number.isInteger(roundedValue) ? roundedValue : roundedValue.toFixed(2);
+//                       let roundedValue = Math.round(value * 100) / 100; // Rounds to 2 decimal places
+//                       let formattedValue = Number.isInteger(roundedValue) ? roundedValue : roundedValue.toFixed(2);
                       
 
-// Ensure "mins" is added only for the last series item
-formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedValue;
+// // Ensure "mins" is added only for the last series item
+// formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedValue;
 
-                        //  formattedValue = i === series.length - 1 ? `${value} mins` : value;
+//                         //  formattedValue = i === series.length - 1 ? `${value} mins` : value;
         
-                        // Add vehicle data only once
-                        if (!vehicleDataAdded) {
-                            // Add vehicle data for this time slot (only once for each tooltip)
-                            const vehicleData = trafficData.resultSameDate[dateKeys[0]]?.[xLabel]?.vehicles || [];
-                            vehicleData.forEach((vehicle) => {
-                                if (vehicle.type && !shownVehicles.has(vehicle.type + vehicleTypeIndices[vehicle.type])) {
-                                    // Increment the index for each vehicle type
-                                    const vehicleColor = colorMapping[vehicle.type]; // Get the color from colorMapping
-                                      // <span style="color: black"> ${vehicle.type} : ${vehicle.avgDuration} avgDuration</span><br/>
-                                    tooltipHtml += `
-                                        <span style="color:${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
-                                         <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${vehicle.avgDuration} mins</span><br/>
+//                         // Add vehicle data only once
+//                         if (!vehicleDataAdded) {
+//                             // Add vehicle data for this time slot (only once for each tooltip)
+//                             const vehicleData = trafficData.resultSameDate[dateKeys[0]]?.[xLabel]?.vehicles || [];
+//                             vehicleData.forEach((vehicle) => {
+//                                 if (vehicle.type && !shownVehicles.has(vehicle.type + vehicleTypeIndices[vehicle.type])) {
+//                                     // Increment the index for each vehicle type
+//                                     const vehicleColor = colorMapping[vehicle.type]; // Get the color from colorMapping
+//                                       // <span style="color: black"> ${vehicle.type} : ${vehicle.avgDuration} avgDuration</span><br/>
+//                                     tooltipHtml += `
+//                                         <span style="color:${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
+//                                          <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${vehicle.avgDuration} mins</span><br/>
 
-                                        `;
-                                    shownVehicles.add(vehicle.type + vehicleTypeIndices[vehicle.type]); // Mark this vehicle as shown
-                                    vehicleTypeIndices[vehicle.type] += 1; // Increment the vehicle type index
-                                }
-                            });
+//                                         `;
+//                                     shownVehicles.add(vehicle.type + vehicleTypeIndices[vehicle.type]); // Mark this vehicle as shown
+//                                     vehicleTypeIndices[vehicle.type] += 1; // Increment the vehicle type index
+//                                 }
+//                             });
         
-                            vehicleDataAdded = true; // Mark vehicle data as added
-                        }
+//                             vehicleDataAdded = true; // Mark vehicle data as added
+//                         }
         
-                        // Add the general series info (total duration)
-                        const seriesName = w.globals.seriesNames[i];
-                        const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[seriesName.toLowerCase()];
+//                         // Add the general series info (total duration)
+//                         const seriesName = w.globals.seriesNames[i];
+//                         const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[seriesName.toLowerCase()];
 
 
 
-                        if(seriesName === "Total Duration"){
+//                         if(seriesName === "Total Duration"){
 
-                        tooltipHtml += `
-                            <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
-                            <span style="color: black">${seriesName}: ${formattedValue}</span><br/>
-                        `;
-                        }
-                    }
-                });
+//                         tooltipHtml += `
+//                             <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
+//                             <span style="color: black">${seriesName}: ${formattedValue}</span><br/>
+//                         `;
+//                         }
+//                     }
+//                 });
         
-            } else {
-                // If it's multiple days, show the second tooltip
-                const vehicleDurations = {};
+//             } else {
+//                 // If it's multiple days, show the second tooltip
+//                 const vehicleDurations = {};
         
-                // Loop through all days and accumulate vehicle durations for each vehicle type
-                Object.values(trafficData).forEach(dayData => {
-                    const vehicles = dayData?.[xLabel]?.vehicles || [];
-                    vehicles.forEach(vehicle => {
-                        if (vehicleDurations[vehicle.type]) {
-                            vehicleDurations[vehicle.type] += vehicle.avgDuration;
-                        } else {
-                            vehicleDurations[vehicle.type] = vehicle.avgDuration;
-                        }
-                    });
-                });
+//                 // Loop through all days and accumulate vehicle durations for each vehicle type
+//                 Object.values(trafficData).forEach(dayData => {
+//                     const vehicles = dayData?.[xLabel]?.vehicles || [];
+//                     vehicles.forEach(vehicle => {
+//                         if (vehicleDurations[vehicle.type]) {
+//                             vehicleDurations[vehicle.type] += vehicle.avgDuration;
+//                         } else {
+//                             vehicleDurations[vehicle.type] = vehicle.avgDuration;
+//                         }
+//                     });
+//                 });
         
-                // Loop through vehicle data and display in the tooltip
-                Object.keys(vehicleDurations).forEach((vehicleType) => {
-                    const totalDuration = vehicleDurations[vehicleType];
-                    const vehicleColor = colorMapping[vehicleType]; // Get the color from colorMapping
+//                 // Loop through vehicle data and display in the tooltip
+//                 Object.keys(vehicleDurations).forEach((vehicleType) => {
+//                     const totalDuration = vehicleDurations[vehicleType];
+//                     const vehicleColor = colorMapping[vehicleType]; // Get the color from colorMapping
 
-                    // <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${vehicle.avgDuration} Avg.Duration</span><br/>   
-//                    <span style="color: black">${vehicleType}: ${totalDuration} avgDuration</span><br/>
-                    tooltipHtml += `
-                        <span style="color: ${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
-                        <span style="color: black"> ${vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)} : ${totalDuration} mins</span><br/>
-                    `;
-                });
+//                     // <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${vehicle.avgDuration} Avg.Duration</span><br/>   
+// //                    <span style="color: black">${vehicleType}: ${totalDuration} avgDuration</span><br/>
+//                     tooltipHtml += `
+//                         <span style="color: ${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
+//                         <span style="color: black"> ${vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)} : ${totalDuration} mins</span><br/>
+//                     `;
+//                 });
         
-                // Add the general series info (total duration for the selected range)
-                series.forEach((s, i) => {
-                    const value = s[dataPointIndex];
-                    if (value !== 0) {
+//                 // Add the general series info (total duration for the selected range)
+//                 series.forEach((s, i) => {
+//                     const value = s[dataPointIndex];
+//                     if (value !== 0) {
            
                         
-                      let roundedValue = Math.round(value * 100) / 100; // Rounds to 2 decimal places
-                      let formattedValue = Number.isInteger(roundedValue) ? roundedValue : roundedValue.toFixed(2);                   
-    // Ensure "mins" is added only for the last series item
-   formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedValue;
+//                       let roundedValue = Math.round(value * 100) / 100; // Rounds to 2 decimal places
+//                       let formattedValue = Number.isInteger(roundedValue) ? roundedValue : roundedValue.toFixed(2);                   
+//     // Ensure "mins" is added only for the last series item
+//    formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedValue;
                         
-             // let formattedValue = i === series.length - 1 ? `${value} mins` : value;
+//              // let formattedValue = i === series.length - 1 ? `${value} mins` : value;
                         
 
-                        const seriesName = w.globals.seriesNames[i];
-                        const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[w.globals.seriesNames[i].toLowerCase()];
+//                         const seriesName = w.globals.seriesNames[i];
+//                         const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[w.globals.seriesNames[i].toLowerCase()];
 
-                        if(seriesName === "Total Duration"){
+//                         if(seriesName === "Total Duration"){
 
 
-                        tooltipHtml += `
-                            <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
-                            <span style="color: black">${w.globals.seriesNames[i]}: ${formattedValue}</span><br/>
-                        `;
-                        }
-                      }
-                });
-            }
+//                         tooltipHtml += `
+//                             <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
+//                             <span style="color: black">${w.globals.seriesNames[i]}: ${formattedValue}</span><br/>
+//                         `;
+//                         }
+//                       }
+//                 });
+//             }
         
-            tooltipHtml += '</div>';
-            return tooltipHtml;
-        },
-    },
-  
+//             tooltipHtml += '</div>';
+//             return tooltipHtml;
+//         },
+//     },
+// tooltip: {
+//   shared: true,
+//   intersect: false,
+//   custom: function({ series, seriesIndex, dataPointIndex, w }) {
+//       let xLabel = w.globals.categoryLabels[dataPointIndex] || w.globals.labels[dataPointIndex];
+
+//       const colorMapping = {
+//           car: "#d9534f",
+//           truck: "#5bc0de",
+//           bus: "#f0ad4e",
+//           van: "#5cb85c",
+//           motorbike: "#9370DB",
+//           totalDuration: "#007bff",
+//           totalCost: "#ff5733" // Orange for totalCost
+//       };
+
+//       let tooltipHtml = '<div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">';
+//       tooltipHtml += `<strong style="color: #333;">${xLabel}</strong><br/>`;
+
+//       const isSingleDay = dateKeys.length === 1;
+//       let vehicleDataAdded = false;
+
+//       if (isSingleDay) {
+//           const vehicleTypeIndices = { car: 1, truck: 1, van: 1, bus: 1, motorbike: 1 };
+//           const shownVehicles = new Set();
+
+//           series.forEach((s, i) => {
+//               const value = s[dataPointIndex];
+//               if (value !== 0) {
+//                   let roundedValue = Math.round(value * 100) / 100;
+//                   let formattedValue = Number.isInteger(roundedValue) ? roundedValue : roundedValue.toFixed(2);
+//                   formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedValue;
+
+//                   if (!vehicleDataAdded) {
+//                       const vehicleData = trafficData.resultSameDate[dateKeys[0]]?.[xLabel]?.vehicles || [];
+//                       vehicleData.forEach((vehicle) => {
+//                           if (vehicle.type && !shownVehicles.has(vehicle.type + vehicleTypeIndices[vehicle.type])) {
+//                               const vehicleColor = colorMapping[vehicle.type];
+//                               tooltipHtml += `
+//                                   <span style="color:${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
+//                                   <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${vehicle.avgDuration} mins</span><br/>
+//                               `;
+//                               shownVehicles.add(vehicle.type + vehicleTypeIndices[vehicle.type]);
+//                               vehicleTypeIndices[vehicle.type] += 1;
+//                           }
+//                       });
+
+//                       // Extract and display totalCost (added here)
+//                       const totalCost = trafficData.resultSameDate[dateKeys[0]]?.[xLabel]?.totalCost || 0;
+//                       tooltipHtml += `
+//                           <span style="color: ${colorMapping.totalCost}; font-size: 18px; line-height: 18px;">●</span>  
+//                           <span style="color: black">Total Cost: $${totalCost.toFixed(2)}</span><br/>
+//                       `;
+
+//                       vehicleDataAdded = true;
+//                   }
+
+//                   const seriesName = w.globals.seriesNames[i];
+//                   const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[seriesName.toLowerCase()];
+                  
+//                   if (seriesName === "Total Duration") {
+//                       tooltipHtml += `
+//                           <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
+//                           <span style="color: black">${seriesName}: ${formattedValue}</span><br/>
+//                       `;
+//                   }
+//               }
+//           });
+//       } else {
+//           const vehicleDurations = {};
+//           let totalCostSum = 0;
+
+//           Object.values(trafficData).forEach(dayData => {
+//               const vehicles = dayData?.[xLabel]?.vehicles || [];
+//               vehicles.forEach(vehicle => {
+//                   if (vehicleDurations[vehicle.type]) {
+//                       vehicleDurations[vehicle.type] += vehicle.avgDuration;
+//                   } else {
+//                       vehicleDurations[vehicle.type] = vehicle.avgDuration;
+//                   }
+//               });
+
+//               // Sum up totalCost across multiple days
+//               totalCostSum += dayData?.[xLabel]?.totalCost || 0;
+//           });
+
+//           Object.keys(vehicleDurations).forEach((vehicleType) => {
+//               const totalDuration = vehicleDurations[vehicleType];
+//               const vehicleColor = colorMapping[vehicleType];
+//               tooltipHtml += `
+//                   <span style="color: ${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
+//                   <span style="color: black"> ${vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)} : ${totalDuration} mins</span><br/>
+//               `;
+//           });
+
+//           series.forEach((s, i) => {
+//               const value = s[dataPointIndex];
+//               if (value !== 0) {
+//                   let roundedValue = Math.round(value * 100) / 100;
+//                   let formattedValue = Number.isInteger(roundedValue) ? roundedValue : roundedValue.toFixed(2);
+//                   formattedValue = i === series.length - 1 ? `${formattedValue} mins` : formattedValue;
+
+//                   const seriesName = w.globals.seriesNames[i];
+//                   const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[w.globals.seriesNames[i].toLowerCase()];
+
+//                   if (seriesName === "Total Duration") {
+//                       tooltipHtml += `
+//                           <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
+//                           <span style="color: black">${w.globals.seriesNames[i]}: ${formattedValue}</span><br/>
+//                       `;
+//                   }
+//               }
+//           });
+
+//           // Display totalCost for multiple days
+//           tooltipHtml += `
+//               <span style="color: ${colorMapping.totalCost}; font-size: 18px; line-height: 18px;">●</span>  
+//               <span style="color: black">Total Cost: $${totalCostSum.toFixed(2)}</span><br/>
+//           `;
+//       }
+
+//       tooltipHtml += '</div>';
+//       return tooltipHtml;
+//   },
+// },
+
+tooltip: {
+  shared: true,
+  intersect: false,
+  custom: function({ series, seriesIndex, dataPointIndex, w }) {
+      let xLabel = w.globals.categoryLabels[dataPointIndex] || w.globals.labels[dataPointIndex];
+
+      const colorMapping = {
+          car: "#d9534f",
+          truck: "#5bc0de",
+          bus: "#f0ad4e",
+          van: "#5cb85c",
+          motorbike: "#9370DB",
+          totalDuration: "#007bff",
+          totalCost: "#ff5733"
+      };
+
+      let tooltipHtml = '<div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">';
+      tooltipHtml += `<strong style="color: #333;">${xLabel}</strong><br/>`;
+
+      const isSingleDay = dateKeys.length === 1;
+      let vehicleDataAdded = false;
+
+      // const formatDuration = (mins) => {
+      //     if (mins >= 60) {
+      //         let hours = Math.floor(mins / 60);
+      //         let remainingMins = mins % 60;
+      //         return remainingMins > 0 ? `${hours} hrs ${remainingMins} mins` : `${hours} hrs`;
+      //     }
+      //     return `${mins} mins`;
+      // };
+
+
+      const formatDuration = (mins) => {
+        if (mins == null || isNaN(mins)) return "0 mins"; // Handle null, undefined, or NaN cases
+    
+        let hours = Math.floor(mins / 60);
+        let remainingMins = (mins % 60).toFixed(2); // Round to 2 decimal places and convert to a string
+    
+        // Convert remainingMins to a number for proper comparison
+        if (parseFloat(remainingMins) >= 60) {
+            hours += 1;
+            remainingMins = "00"; // Reset minutes
+        }
+    
+        return hours > 0 
+            ? (parseFloat(remainingMins) > 0 ? `${hours} hrs ${remainingMins} mins` : `${hours} hrs`)
+            : `${mins.toFixed(2)} mins`; // If less than an hour, show only minutes
+    };
+
+    
+
+      if (isSingleDay) {
+          const vehicleTypeIndices = { car: 1, truck: 1, van: 1, bus: 1, motorbike: 1 };
+          const shownVehicles = new Set();
+
+          series.forEach((s, i) => {
+              const value = s[dataPointIndex];
+              if (value !== 0) {
+                  let formattedValue = formatDuration(value);
+
+                  if (!vehicleDataAdded) {
+                      const vehicleData = trafficData.resultSameDate[dateKeys[0]]?.[xLabel]?.vehicles || [];
+                      vehicleData.forEach((vehicle) => {
+                          if (vehicle.type && !shownVehicles.has(vehicle.type + vehicleTypeIndices[vehicle.type])) {
+                              const vehicleColor = colorMapping[vehicle.type];
+                              let formattedVehicleDuration = formatDuration(vehicle.avgDuration);
+                              tooltipHtml += `
+                                  <span style="color:${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
+                                  <span style="color: black"> ${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)} : ${formattedVehicleDuration}</span><br/>
+                              `;
+                              shownVehicles.add(vehicle.type + vehicleTypeIndices[vehicle.type]);
+                              vehicleTypeIndices[vehicle.type] += 1;
+                          }
+                      });
+
+                      const totalCost = trafficData.resultSameDate[dateKeys[0]]?.[xLabel]?.totalCost || 0;
+                      tooltipHtml += `
+                          <span style="color: ${colorMapping.totalCost}; font-size: 18px; line-height: 18px;">●</span>  
+                          <span style="color: black">Total Cost: $${totalCost.toFixed(2)}</span><br/>
+                      `;
+
+                      vehicleDataAdded = true;
+                  }
+
+                  const seriesName = w.globals.seriesNames[i];
+                  const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[seriesName.toLowerCase()];
+
+                  if (seriesName === "Total Duration") {
+                      tooltipHtml += `
+                          <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
+                          <span style="color: black">${seriesName}: ${formattedValue}</span><br/>
+                      `;
+                  }
+              }
+          });
+      } else {
+          const vehicleDurations = {};
+          let totalCostSum = 0;
+
+          Object.values(trafficData).forEach(dayData => {
+              const vehicles = dayData?.[xLabel]?.vehicles || [];
+              vehicles.forEach(vehicle => {
+                  if (vehicleDurations[vehicle.type]) {
+                      vehicleDurations[vehicle.type] += vehicle.avgDuration;
+                  } else {
+                      vehicleDurations[vehicle.type] = vehicle.avgDuration;
+                  }
+              });
+
+              totalCostSum += dayData?.[xLabel]?.totalCost || 0;
+          });
+
+          Object.keys(vehicleDurations).forEach((vehicleType) => {
+              const totalDuration = vehicleDurations[vehicleType];
+              const vehicleColor = colorMapping[vehicleType];
+              let formattedVehicleDuration = formatDuration(totalDuration);
+              tooltipHtml += `
+                  <span style="color: ${vehicleColor}; font-size: 18px; line-height: 18px;">●</span>  
+                  <span style="color: black"> ${vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)} : ${formattedVehicleDuration}</span><br/>
+              `;
+          });
+
+          series.forEach((s, i) => {
+              const value = s[dataPointIndex];
+              if (value !== 0) {
+                  let formattedValue = formatDuration(value);
+
+                  const seriesName = w.globals.seriesNames[i];
+                  const color = i === series.length - 1 ? colorMapping.totalDuration : colorMapping[w.globals.seriesNames[i].toLowerCase()];
+
+                  if (seriesName === "Total Duration") {
+                      tooltipHtml += `
+                          <span style="color: ${color}; font-size: 18px; line-height: 18px;">●</span>  
+                          <span style="color: black">${w.globals.seriesNames[i]}: ${formattedValue}</span><br/>
+                      `;
+                  }
+              }
+          });
+
+          tooltipHtml += `
+              <span style="color: ${colorMapping.totalCost}; font-size: 18px; line-height: 18px;">●</span>  
+              <span style="color: black">Total Cost: $${totalCostSum.toFixed(2)}</span><br/>
+          `;
+      }
+
+      tooltipHtml += '</div>';
+      return tooltipHtml;
+  },
+},
       legend: {
         // show: true,
         customLegendItems: ["Total Duration"],

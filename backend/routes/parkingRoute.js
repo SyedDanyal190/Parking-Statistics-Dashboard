@@ -91,7 +91,9 @@ function calculateDuration(startDate, endDate, data) {
   return durationData;
 }
 
-const Rate = 5;
+// const Rate = 5;
+const Rate = 5 / 60; // 0.0833 (5 dollars per hour)
+
 
 // Function to calculate cost by multiplying duration with Rate
 const calculateCost = (calculationDurations) => {
@@ -164,8 +166,8 @@ const formatParkingDataOtherValues = (
 
     const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
-    const Rate = 5; // Cost per minute
-
+    // const Rate = 5; // Cost per minute
+    const Rate = 5 / 60; // 0.0833 (5 dollars per hour)
     let totalCost = 0;
     let vehicleCount = 0;
 
@@ -437,8 +439,8 @@ const formatParkingData11 = (data2, startDate, endDate) => {
 
     const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
-    const Rate = 5;
-
+    // const Rate = 5;
+    const Rate = 5 / 60; // 0.0833 (5 dollars per hour)
     return Object.values(parsedData)
       .sort((a, b) => {
         const timeA = moment.utc(a.timeIn, "YYYY-MM-DD h:mm A").valueOf();
@@ -520,8 +522,8 @@ const formatParkingData122 = (data2, startDate, endDate, updatedTimeOuts) => {
 
     const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
-    const Rate = 5; // Cost per minute
-
+    // const Rate = 5; // Cost per minute
+    const Rate = 5 / 60; // 0.0833 (5 dollars per hour)
     return Object.values(parsedData)
       .sort(
         (a, b) =>
@@ -590,8 +592,8 @@ const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
 
     const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
-    const Rate = 5; // Cost per minute
-
+    // const Rate = 5; // Cost per minute
+    const Rate = 5 / 60; // 0.0833 (5 dollars per hour)
     return Object.values(parsedData)
       .sort(
         (a, b) =>
@@ -840,6 +842,200 @@ const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
 // };
 
 
+// const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+//   const result = {};
+
+//   if (start.toISOString().split("T")[0] === end.toISOString().split("T")[0]) {
+//     const dateKey = start.toISOString().split("T")[0];
+
+//     if (!result[dateKey]) {
+//       result[dateKey] = generateHourRanges().reduce((acc, hour) => {
+//         acc[hour] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//           vehicles: {},
+//         };
+//         return acc;
+//       }, {});
+//     }
+
+//     vehicles.forEach((vehicle) => {
+//       let timeOut = vehicle.timeOut;
+
+//       if (!timeOut) {
+//         const matchedTimeout = Object.values(updatedTimeOuts).find(
+//           (item) =>
+//             item.vehicleNumber === vehicle.vehicleNumber &&
+//             item.timeIn === vehicle.timeIn
+//         );
+
+//         if (matchedTimeout) {
+//           timeOut = matchedTimeout.timeOut;
+//         } else {
+//           return;
+//         }
+//       }
+
+//       let timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+//       timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
+//       const vehicleType = vehicle.vehicleType.toLowerCase();
+
+//       // Ensure duration is only for the specific day
+//       let dailyDuration = Math.min(
+//         (timeOut - timeIn) / 60000,
+//         1440 - timeIn.getUTCHours() * 60 - timeIn.getUTCMinutes()
+//       );
+
+//       if (
+//         timeIn.toISOString().split("T")[0] === dateKey ||
+//         timeOut.toISOString().split("T")[0] === dateKey
+//       ) {
+//         generateHourRanges().forEach((hourRange) => {
+//           const standardizedRange = hourRange.replace("-00:00", "-24:00");
+//           const [hourStart, hourEnd] = standardizedRange
+//             .split("-")
+//             .map((time) => parseInt(time.split(":")[0]));
+
+//           const vehicleStartHour = getHour(vehicle.timeIn);
+//           const vehicleEndHour = getHour(timeOut);
+
+//           if (
+//             (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
+//             (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
+//           ) {
+//             result[dateKey][hourRange].total += 1;
+//             result[dateKey][hourRange][vehicleType] += 1;
+
+//             if (!result[dateKey][hourRange].vehicles[vehicleType]) {
+//               result[dateKey][hourRange].vehicles[vehicleType] = {
+//                 totalDuration: 0,
+//                 count: 0,
+//               };
+//             }
+
+//             result[dateKey][hourRange].vehicles[vehicleType].totalDuration +=
+//               dailyDuration;
+//             result[dateKey][hourRange].vehicles[vehicleType].count += 1;
+//           }
+//         });
+//       }
+//     });
+
+//     Object.keys(result[dateKey]).forEach((hourRange) => {
+//       const vehicleData = result[dateKey][hourRange].vehicles;
+//       result[dateKey][hourRange].vehicles = Object.keys(vehicleData).map(
+//         (type) => ({
+//           type,
+//           duration: parseFloat(
+//             (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(
+//               1
+//             )
+//           ),
+//           avgDuration: parseFloat(
+//             (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(
+//               1
+//             )
+//           ),
+//         })
+//       );
+//     });
+//   } else {
+//     for (
+//       let currentDate = new Date(start);
+//       currentDate <= end;
+//       currentDate.setDate(currentDate.getDate() + 1)
+//     ) {
+//       const dateKey = currentDate.toISOString().split("T")[0];
+
+//       if (!result[dateKey]) {
+//         result[dateKey] = {
+//           total: 0,
+//           car: 0,
+//           truck: 0,
+//           bus: 0,
+//           van: 0,
+//           motorbike: 0,
+//           vehicles: {},
+//         };
+//       }
+
+//       vehicles.forEach((vehicle) => {
+//         let timeOut = vehicle.timeOut;
+
+//         if (!timeOut) {
+//           const matchedTimeout = Object.values(updatedTimeOuts).find(
+//             (item) =>
+//               item.vehicleNumber === vehicle.vehicleNumber &&
+//               item.timeIn === vehicle.timeIn
+//           );
+
+//           if (matchedTimeout) {
+//             timeOut = matchedTimeout.timeOut;
+//           } else {
+//             return;
+//           }
+//         }
+
+//         let timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+//         timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
+//         const vehicleType = vehicle.vehicleType.toLowerCase();
+
+//         let dailyStart = new Date(dateKey);
+//         dailyStart.setUTCHours(0, 0, 0, 0);
+//         let dailyEnd = new Date(dateKey);
+//         dailyEnd.setUTCHours(23, 59, 59, 999);
+
+//         let adjustedTimeIn = timeIn < dailyStart ? dailyStart : timeIn;
+//         let adjustedTimeOut = timeOut > dailyEnd ? dailyEnd : timeOut;
+
+//         let dailyDuration = (adjustedTimeOut - adjustedTimeIn) / 60000;
+
+//         if (
+//           timeIn <= end &&
+//           timeOut >= start &&
+//           dailyStart.getTime() <= timeOut.getTime() &&
+//           dailyEnd.getTime() >= timeIn.getTime()
+//         ) {
+//           result[dateKey].total += 1;
+//           result[dateKey][vehicleType] += 1;
+
+//           if (!result[dateKey].vehicles[vehicleType]) {
+//             result[dateKey].vehicles[vehicleType] = {
+//               totalDuration: 0,
+//               count: 0,
+//             };
+//           }
+
+//           result[dateKey].vehicles[vehicleType].totalDuration += dailyDuration;
+//           result[dateKey].vehicles[vehicleType].count += 1;
+//         }
+//       });
+
+//       const vehicleData = result[dateKey].vehicles;
+//       result[dateKey].vehicles = Object.keys(vehicleData).map((type) => ({
+//         type,
+//         duration: parseFloat(
+//           (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
+//         ),
+//         avgDuration: parseFloat(
+//           (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
+//         ),
+//       }));
+//     }
+//   }
+
+//   return result;
+// };
+
+
+// const rate = 5; // Fixed cost per minute
+const rate = 5 / 60; // 0.0833 (5 dollars per hour)
 const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -858,6 +1054,7 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
           van: 0,
           motorbike: 0,
           vehicles: {},
+          totalCost: 0, // Initialize total cost
         };
         return acc;
       }, {});
@@ -884,7 +1081,6 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
       timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
       const vehicleType = vehicle.vehicleType.toLowerCase();
 
-      // Ensure duration is only for the specific day
       let dailyDuration = Math.min(
         (timeOut - timeIn) / 60000,
         1440 - timeIn.getUTCHours() * 60 - timeIn.getUTCMinutes()
@@ -914,12 +1110,17 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
               result[dateKey][hourRange].vehicles[vehicleType] = {
                 totalDuration: 0,
                 count: 0,
+                cost: 0,
               };
             }
 
-            result[dateKey][hourRange].vehicles[vehicleType].totalDuration +=
-              dailyDuration;
+            result[dateKey][hourRange].vehicles[vehicleType].totalDuration += dailyDuration;
             result[dateKey][hourRange].vehicles[vehicleType].count += 1;
+
+            // Calculate cost per vehicle type
+            const vehicleCost = dailyDuration * rate;
+            result[dateKey][hourRange].vehicles[vehicleType].cost += vehicleCost;
+            result[dateKey][hourRange].totalCost += vehicleCost;
           }
         });
       }
@@ -931,15 +1132,12 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
         (type) => ({
           type,
           duration: parseFloat(
-            (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(
-              1
-            )
+            (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
           ),
           avgDuration: parseFloat(
-            (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(
-              1
-            )
+            (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
           ),
+          cost: vehicleData[type].cost, // Add cost per vehicle type
         })
       );
     });
@@ -960,6 +1158,7 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
           van: 0,
           motorbike: 0,
           vehicles: {},
+          totalCost: 0, // Initialize total cost
         };
       }
 
@@ -1007,11 +1206,17 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
             result[dateKey].vehicles[vehicleType] = {
               totalDuration: 0,
               count: 0,
+              cost: 0,
             };
           }
 
           result[dateKey].vehicles[vehicleType].totalDuration += dailyDuration;
           result[dateKey].vehicles[vehicleType].count += 1;
+
+          // Calculate cost per vehicle type
+          const vehicleCost = dailyDuration * rate;
+          result[dateKey].vehicles[vehicleType].cost += vehicleCost;
+          result[dateKey].totalCost += vehicleCost;
         }
       });
 
@@ -1024,12 +1229,15 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
         avgDuration: parseFloat(
           (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
         ),
+        cost: vehicleData[type].cost, // Add cost per vehicle type
       }));
     }
   }
 
   return result;
 };
+
+
 
 const findLongestParkingDuration = (data2, startDate, endDate, updatedTimeOuts) => {
   try {
@@ -1213,11 +1421,12 @@ router.get("/parkingData", (req, res) => {
         updatedTimeOuts
       );
 
-
     
-       console.log("result of   12",result12);
-       console.log("result  of  1233", result1233) 
-      const combinedData = {
+      console.log("result12",    result12);
+      console.log("result1233",  result1233);  
+
+      
+       const combinedData = {
         dailyDurations,
         highestDuration,
         highestCost,
@@ -1313,9 +1522,9 @@ router.post("/updateTimeOut", async (req, res) => {
 
     // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
 
-    // console.log(
-    //   `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
-    // ); // Log values
+    console.log(
+      `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+    ); // Log values
 
     res.json({
       success: true,
@@ -1352,9 +1561,9 @@ router.post("/updateTimeOut/calculatenow", async (req, res) => {
 
     // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
 
-    console.log(
-      `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
-    ); // Log values
+    // console.log(
+    //   `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+    // ); // Log values
 
     res.json({
       success: true,

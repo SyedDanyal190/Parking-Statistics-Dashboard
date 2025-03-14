@@ -262,7 +262,7 @@ const MyDisplay = ({ trafficData, MainApi }) => {
     const initialState = {};
   
     DisplayVehicleTime.forEach((item) => {
-      console.log("Processing item:", item); // Debugging each entry
+      // console.log("Processing item:", item); // Debugging each entry
   
       const regex =
         /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+)/;
@@ -273,8 +273,8 @@ const MyDisplay = ({ trafficData, MainApi }) => {
         const bayNumber = match[6].trim();
         const timeOut = match[4].trim();
   
-        console.log("Match found:", match);
-        console.log("Vehicle:", vehicleNumber, "| Bay:", bayNumber, "| Time Out:", timeOut);
+        // console.log("Match found:", match);
+        // console.log("Vehicle:", vehicleNumber, "| Bay:", bayNumber, "| Time Out:", timeOut);
   
         // Ensure all values are valid before updating state
         if (timeOut && vehicleNumber && bayNumber) {
