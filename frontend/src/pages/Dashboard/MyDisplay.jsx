@@ -246,11 +246,20 @@ import React, { useState, useEffect } from "react";
 import { Card, CardBody, CardTitle } from "reactstrap";
 import moment from "moment";
 
-const MyDisplay = ({ trafficData, MainApi }) => {
+const MyDisplay = ({ trafficData, MainApi , parking }) => {
+
+
+
   const [payNowState, setPayNowState] = useState({});
   const [calNowState, setCalNowState] = useState({});
    const [defaultState , setDefaultState] =  useState({});  
 
+
+   console.log("defaultState111111111111111:", defaultState);
+   console.log("calNowState:1111", calNowState);
+   console.log("payNowState:11111", payNowState);
+   
+    console.log("Parking!!!!!!!!!!!!!!!!!!!",parking);
 
   useEffect(() => {
     if (!trafficData || !Array.isArray(trafficData.result1233) || trafficData.result1233.length === 0) {
@@ -262,7 +271,7 @@ const MyDisplay = ({ trafficData, MainApi }) => {
     const initialState = {};
   
     DisplayVehicleTime.forEach((item) => {
-      // console.log("Processing item:", item); // Debugging each entry
+      console.log("Processing item:", item); // Debugging each entry
   
       const regex =
         /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+)/;
@@ -273,8 +282,8 @@ const MyDisplay = ({ trafficData, MainApi }) => {
         const bayNumber = match[6].trim();
         const timeOut = match[4].trim();
   
-        // console.log("Match found:", match);
-        // console.log("Vehicle:", vehicleNumber, "| Bay:", bayNumber, "| Time Out:", timeOut);
+        console.log("Match found:", match);
+        console.log("Vehicle:", vehicleNumber, "| Bay:", bayNumber, "| Time Out:", timeOut);
   
         // Ensure all values are valid before updating state
         if (timeOut && vehicleNumber && bayNumber) {
@@ -307,17 +316,86 @@ const MyDisplay = ({ trafficData, MainApi }) => {
   const DisplayVehicleTime = trafficData.result1233 || [];
   const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-  const handleCalculateNow = (key, vehicleNumber, timeIn) => {
+  // const handleCalculateNow = (key, vehicleNumber, timeIn) => {
+  //   const updatedTime = moment().format("YYYY-MM-DD h:mm A");
+  
+  //   fetch(`${baseUrl}/apipsd/parking/updateTimeOut/calculatenow`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       key,
+  //       timeOut: updatedTime,
+  //       vehicleNumber,
+  //       timeIn,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log("API Response:", data);
+  //       if (data.success) {
+  //         setCalNowState((prevState) => ({
+  //           ...prevState,
+  //           [key]: true, // Enables "Pay Now"
+  //         }));
+  
+  //         // Delay MainApi() slightly to allow UI to update first
+  //         setTimeout(() => {
+  //           MainApi();
+  //         }, 500);
+  //       } else {
+  //         console.error("Failed to update timeout.");
+  //       }
+  //     })
+  //     .catch((err) => console.error("Error updating timeout:", err));
+  // };
+  
+  
+
+  // Function to handle "Pay Now"
+
+
+
+  // const handlePayNow = (key, vehicleNumber, timeIn) => {
+  //   const updatedTime = moment().format("YYYY-MM-DD h:mm A");
+  
+  //   fetch(`${baseUrl}/apipsd/parking/updateTimeOut`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       key,
+  //       timeOut: updatedTime,
+  //       vehicleNumber,
+  //       timeIn,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log("API Response:", data);
+  //       if (data.success) {
+  //         setPayNowState((prevState) => ({
+  //           ...prevState,
+  //           [key]: "Paid", // Updates UI to show "Paid"
+  //         }));
+  //         MainApi(); // Refresh data after payment
+  //       } else {
+  //         console.error("Failed to process payment.");
+  //       }
+  //     })
+  //     .catch((err) => console.error("Error processing payment:", err));
+  // };
+  
+
+  const handleCalculateNow = (vehicleNumber, timeIn) => {
     const updatedTime = moment().format("YYYY-MM-DD h:mm A");
   
     fetch(`${baseUrl}/apipsd/parking/updateTimeOut/calculatenow`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        key,
-        timeOut: updatedTime,
         vehicleNumber,
+        timeOut: updatedTime,
         timeIn,
+        parking: parking?.label,
       }),
     })
       .then((res) => res.json())
@@ -326,13 +404,12 @@ const MyDisplay = ({ trafficData, MainApi }) => {
         if (data.success) {
           setCalNowState((prevState) => ({
             ...prevState,
-            [key]: true, // Enables "Pay Now"
+            [vehicleNumber]: true, // Use vehicleNumber instead of index
           }));
   
-          // Delay MainApi() slightly to allow UI to update first
           setTimeout(() => {
             MainApi();
-          }, 500);
+          }, 300);
         } else {
           console.error("Failed to update timeout.");
         }
@@ -340,20 +417,17 @@ const MyDisplay = ({ trafficData, MainApi }) => {
       .catch((err) => console.error("Error updating timeout:", err));
   };
   
-  
-
-  // Function to handle "Pay Now"
-  const handlePayNow = (key, vehicleNumber, timeIn) => {
+  const handlePayNow = (vehicleNumber, timeIn) => {
     const updatedTime = moment().format("YYYY-MM-DD h:mm A");
   
     fetch(`${baseUrl}/apipsd/parking/updateTimeOut`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        key,
-        timeOut: updatedTime,
         vehicleNumber,
+        timeOut: updatedTime,
         timeIn,
+        parking: parking?.label,
       }),
     })
       .then((res) => res.json())
@@ -362,9 +436,9 @@ const MyDisplay = ({ trafficData, MainApi }) => {
         if (data.success) {
           setPayNowState((prevState) => ({
             ...prevState,
-            [key]: "Paid", // Updates UI to show "Paid"
+            [vehicleNumber]: "Paid", // Use vehicleNumber instead of index
           }));
-          MainApi(); // Refresh data after payment
+          MainApi();
         } else {
           console.error("Failed to process payment.");
         }
@@ -372,6 +446,7 @@ const MyDisplay = ({ trafficData, MainApi }) => {
       .catch((err) => console.error("Error processing payment:", err));
   };
   
+
   return (
     <Card>
       <CardBody>
@@ -393,88 +468,61 @@ const MyDisplay = ({ trafficData, MainApi }) => {
               </tr>
             </thead>
             <tbody>
-              {DisplayVehicleTime.map((entry, key) => {
-                const regex =
-                  /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+)/;
-                const match = entry.match(regex);
+  {DisplayVehicleTime.map((entry) => {
+    const regex =
+      /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+)/;
+    const match = entry.match(regex);
 
-                if (!match) {
-                  console.error("Invalid entry format:", entry);
-                  return null;
-                }
+    if (!match) {
+      console.error("Invalid entry format:", entry);
+      return null;
+    }
 
-                const vehicleType = match[1];
-                const capitalizedVehicleType =
-                  vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
-                const vehicleNumber = match[2];
-                const timeIn = match[3];
-                const timeOut = match[4] || "";
-                const cost = match[5] || "";
-                const parkingBay = match[6];
-                const parkingLevel = match[7];
-                const vehicleDisplay = `${capitalizedVehicleType} (${vehicleNumber})`;
+    const vehicleType = match[1];
+    const capitalizedVehicleType =
+      vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
+    const vehicleNumber = match[2];
+    const timeIn = match[3];
+    const timeOut = match[4] || "";
+    const cost = match[5] || "";
+    const parkingBay = match[6];
+    const parkingLevel = match[7];
 
-                return (
-                  <tr key={key}>
-                    <td>{vehicleDisplay}</td>
-                    <td>{moment(timeIn, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")}</td>
-                    <td>{timeOut ? moment(timeOut, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A") : ""}</td>
-                    <td>{parkingLevel}</td>
-                    <td>{parkingBay}</td>
-                    <td>{cost ? `$${cost}` : ""}</td>
+    return (
+      <tr key={vehicleNumber}>
+        <td>{`${capitalizedVehicleType} (${vehicleNumber})`}</td>
+        <td>{moment(timeIn, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")}</td>
+        <td>{timeOut ? moment(timeOut, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A") : ""}</td>
+        <td>{parkingLevel}</td>
+        <td>{parkingBay}</td>
+        <td>{cost ? `$${cost}` : ""}</td>
 
-                    {/* Payment Status */}
-                 
-                     <td>
-   {payNowState[key] === "Paid" ? (
-    "Paid"
-  ) : calNowState[key] ? (
-    <button
-      onClick={() => handlePayNow(key, vehicleNumber, timeIn)}
-      className="btn btn-success btn-sm"
-    >
-      Pay Now
-    </button>
-  ) : defaultState[vehicleNumber] === "Paid" ? (
-    "Paid"
-  ) :  (
-    <button
-      onClick={() => handleCalculateNow(key, vehicleNumber, timeIn)}
-      className="btn btn-primary btn-sm"
-    >
-      Calculate Now
-    </button>
-  )}
-</td>
+        <td>
+          {payNowState[vehicleNumber] === "Paid" ? (
+            "Paid"
+          ) : calNowState[vehicleNumber] ? (
+            <button
+              onClick={() => handlePayNow(vehicleNumber, timeIn)}
+              className="btn btn-success btn-sm"
+            >
+              Pay Now
+            </button>
+          ) : defaultState[vehicleNumber] === "Paid" ? (
+            "Paid"
+          ) : (
+            <button
+              onClick={() => handleCalculateNow(vehicleNumber, timeIn)}
+              className="btn btn-primary btn-sm"
+            >
+              Calculate Now
+            </button>
+          )}
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
 
-{/* <td>
-  {timeOut?.trim() ? (
-    "Paid" // If timeOut exists, show "Paid"
-  ) : payNowState[key] === "Paid" ? (
-    "Paid" // If the user clicked "Pay Now" and API responded, show "Paid"
-  ) : calNowState[key] ? (
-    <button
-      onClick={() => handlePayNow(key, vehicleNumber, timeIn)}
-      className="btn btn-success btn-sm"
-    >
-      Pay Now
-    </button>
-  ) : (
-    <button
-      onClick={() => handleCalculateNow(key, vehicleNumber, timeIn)}
-      className="btn btn-primary btn-sm"
-    >
-      Calculate Now
-    </button>
-  )} 
-</td> */}
-
-
-                    
-                  </tr>
-                );
-              })}
-            </tbody>
           </table>
         </div>
       </CardBody>

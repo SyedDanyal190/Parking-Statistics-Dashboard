@@ -1499,31 +1499,104 @@ router.post("/upload", upload.single("data.json"), (req, res) => {
 
 const updatedTimeOuts = {}; // Store updated timeouts globally
 const  updatedTimeOutsCalculate = {}; 
+
+
+// router.post("/updateTimeOut", async (req, res) => {
+//   try {
+//     const { key, timeOut, vehicleNumber, timeIn } = req.body;
+
+//     // if (!key || !timeOut) {
+//     //   return res
+//     //     .status(400)
+//     //     .json({ success: false, message: "Missing key or timeOut value." });
+//     // }
+
+
+//     if (key === undefined || key === null || !timeOut) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Missing key or timeOut value.",
+//       });
+//     }
+
+//     // updatedTimeOuts[key] = timeOut; // Store new timeout
+//     updatedTimeOuts[key] = { timeOut, vehicleNumber, timeIn };
+
+//     // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
+
+//     console.log(
+//       `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+//     ); // Log values
+
+//     res.json({
+//       success: true,
+//       message: "Timeout updated successfully",
+//       updatedData: updatedTimeOuts,
+//     });
+//   } catch (error) {
+//     console.error("Error updating timeout:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// });
+
+// router.post("/updateTimeOut/calculatenow", async (req, res) => {
+//   try {
+//     const { key, timeOut, vehicleNumber, timeIn } = req.body;
+
+//     // if (!key || !timeOut) {
+//     //   return res
+//     //     .status(400)
+//     //     .json({ success: false, message: "Missing key or timeOut value." });
+//     // }
+
+//     if (key === undefined || key === null || !timeOut) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Missing key or timeOut value.",
+//       });
+//     }
+
+
+//     // updatedTimeOuts[key] = timeOut; // Store new timeout
+//     updatedTimeOutsCalculate[key] = { timeOut, vehicleNumber, timeIn };
+
+//     // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
+
+//     // console.log(
+//     //   `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+//     // ); // Log values
+
+//     res.json({
+//       success: true,
+//       message: "Timeout updated successfully",
+//       updatedData:updatedTimeOutsCalculate,
+//     });
+//   } catch (error) {
+//     console.error("Error updating timeout:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// });
+
+
+
 router.post("/updateTimeOut", async (req, res) => {
   try {
-    const { key, timeOut, vehicleNumber, timeIn } = req.body;
+    const { timeOut, vehicleNumber, timeIn , parking} = req.body;
 
-    // if (!key || !timeOut) {
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: "Missing key or timeOut value." });
-    // }
-
-
-    if (key === undefined || key === null || !timeOut) {
+    if (!timeOut) {
       return res.status(400).json({
         success: false,
-        message: "Missing key or timeOut value.",
+        message: "Missing timeOut value.",
       });
     }
 
-    // updatedTimeOuts[key] = timeOut; // Store new timeout
-    updatedTimeOuts[key] = { timeOut, vehicleNumber, timeIn };
 
-    // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
+  
+    const identifier = vehicleNumber || timeIn; // Unique identifier based on available data
+    updatedTimeOuts[identifier] = { timeOut, vehicleNumber, timeIn ,parking };
 
     console.log(
-      `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+      `Updating timeout for Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}, parking ${parking}`
     ); // Log values
 
     res.json({
@@ -1537,38 +1610,24 @@ router.post("/updateTimeOut", async (req, res) => {
   }
 });
 
-
 router.post("/updateTimeOut/calculatenow", async (req, res) => {
   try {
-    const { key, timeOut, vehicleNumber, timeIn } = req.body;
+    const { timeOut, vehicleNumber, timeIn , parking} = req.body;
 
-    // if (!key || !timeOut) {
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: "Missing key or timeOut value." });
-    // }
-
-    if (key === undefined || key === null || !timeOut) {
+    if (!timeOut) {
       return res.status(400).json({
         success: false,
-        message: "Missing key or timeOut value.",
+        message: "Missing timeOut value.",
       });
     }
 
-
-    // updatedTimeOuts[key] = timeOut; // Store new timeout
-    updatedTimeOutsCalculate[key] = { timeOut, vehicleNumber, timeIn };
-
-    // console.log(`Updating timeout for key: ${key}, new timeout: ${timeOut}`);
-
-    // console.log(
-    //   `Updating timeout for key: ${key},Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
-    // ); // Log values
+    const identifier = vehicleNumber || timeIn; // Unique identifier based on available data
+    updatedTimeOutsCalculate[identifier] = { timeOut, vehicleNumber, timeIn,parking };
 
     res.json({
       success: true,
       message: "Timeout updated successfully",
-      updatedData:updatedTimeOutsCalculate,
+      updatedData: updatedTimeOutsCalculate,
     });
   } catch (error) {
     console.error("Error updating timeout:", error);

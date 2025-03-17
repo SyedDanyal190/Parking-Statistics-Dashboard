@@ -20,7 +20,7 @@ import MyDisplay from "./MyDisplay";
 
 
 const Dashboard = ({ selectedGroup, optionGroup, tollPlazaData,
-  
+
   MainApi,
   trafficData,
   handleSelectGroup,
@@ -29,6 +29,7 @@ const Dashboard = ({ selectedGroup, optionGroup, tollPlazaData,
   totalVehicleCount,
   totalIsbToLhrCount,
   totalLhrToIsbCount,
+
 }) => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -190,7 +191,7 @@ console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
 
    <Row>
    <Col xl={12}>
-              <MyDisplay  trafficData={trafficData}   MainApi={MainApi}    />
+              <MyDisplay  trafficData={trafficData}   MainApi={MainApi}    parking={selectedGroup}   />
            </Col>
    </Row>
   
