@@ -78,5 +78,13 @@
     "timeOut": "",
     "level": 2,
     "bay": 2
+  },
+  "10": {
+    "vehicleType": "car",
+    "vehicleNumber": "GQA-2221",
+    "timeIn": "2025-03-17 10:00 PM",
+    "timeOut": "2025-03-17 10:50 PM",
+    "level": 2,
+    "bay": 2
   }
 }

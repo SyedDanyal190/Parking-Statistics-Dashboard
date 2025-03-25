@@ -10,8 +10,8 @@
   "1": {
     "vehicleType": "bus",
     "vehicleNumber": "VDR-6821",
-    "timeIn": "2025-03-09 1:10 AM",
-    "timeOut": "2025-03-09 1:16 AM",
+    "timeIn": "2025-03-18 1:10 AM",
+    "timeOut": "2025-03-18 1:16 AM",
     "level": 1,
     "bay": 5
   },
@@ -78,5 +78,62 @@
     "timeOut": "",
     "level": 2,
     "bay": 2
+  },
+  "10": {
+    "vehicleType": "car",
+    "vehicleNumber": "GQA-2221",
+    "timeIn": "2025-03-28 10:00 PM",
+    "timeOut": "2025-03-28 10:30 PM",
+    "level": 2,
+    "bay": 2
+  },
+  "11": {
+    "vehicleType": "van",
+    "vehicleNumber": "GQA-2233",
+    "timeIn": "2025-03-28 01:00 AM",
+    "timeOut": "",
+    "level": 2,
+    "bay": 2
+  },
+  "12": {
+    "vehicleType": "car",
+    "vehicleNumber": "GQA-2234",
+    "timeIn": "2025-03-28 01:40 AM",
+    "timeOut": "2025-03-28 01:50 AM",
+    "level": 2,
+    "bay": 2
+  },
+  "13": {
+    "vehicleType": "bus",
+    "vehicleNumber": "GQA-2214",
+    "timeIn": "2025-03-28 02:10 AM",
+    "timeOut": "2025-03-28 02:20 AM",
+    "level": 2,
+    "bay": 2
+  },
+  "14": {
+    "vehicleType": "bus",
+    "vehicleNumber": "GQA-2222",
+    "timeIn": "2025-03-28 12:01 AM",
+    "timeOut": "2025-03-28 11:56 PM",
+    "level": 2,
+    "bay": 2
+  },
+  "15": {
+    "vehicleType": "bus",
+    "vehicleNumber": "GQA-6666",
+    "timeIn": "2025-03-13 1:01 AM",
+    "timeOut": "",
+    "level": 2,
+    "bay": 2
+  },
+  "16": {
+    "vehicleType": "car",
+    "vehicleNumber": "GQA-7777",
+    "timeIn": "2025-03-13 1:20 AM",
+    "timeOut": "2025-03-13 1:26 AM",
+    "level": 2,
+    "bay": 2
   }
+
 }

@@ -255,11 +255,11 @@ const MyDisplay = ({ trafficData, MainApi , parking }) => {
    const [defaultState , setDefaultState] =  useState({});  
 
 
-   console.log("defaultState111111111111111:", defaultState);
-   console.log("calNowState:1111", calNowState);
-   console.log("payNowState:11111", payNowState);
+  //  console.log("defaultState111111111111111:", defaultState);
+  //  console.log("calNowState:1111", calNowState);
+  //  console.log("payNowState:11111", payNowState);
    
-    console.log("Parking!!!!!!!!!!!!!!!!!!!",parking);
+  //   console.log("Parking!!!!!!!!!!!!!!!!!!!",parking);
 
   useEffect(() => {
     if (!trafficData || !Array.isArray(trafficData.result1233) || trafficData.result1233.length === 0) {
@@ -271,7 +271,7 @@ const MyDisplay = ({ trafficData, MainApi , parking }) => {
     const initialState = {};
   
     DisplayVehicleTime.forEach((item) => {
-      console.log("Processing item:", item); // Debugging each entry
+      // console.log("Processing item:", item); // Debugging each entry
   
       const regex =
         /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+)/;
@@ -282,8 +282,8 @@ const MyDisplay = ({ trafficData, MainApi , parking }) => {
         const bayNumber = match[6].trim();
         const timeOut = match[4].trim();
   
-        console.log("Match found:", match);
-        console.log("Vehicle:", vehicleNumber, "| Bay:", bayNumber, "| Time Out:", timeOut);
+        // console.log("Match found:", match);
+        // console.log("Vehicle:", vehicleNumber, "| Bay:", bayNumber, "| Time Out:", timeOut);
   
         // Ensure all values are valid before updating state
         if (timeOut && vehicleNumber && bayNumber) {

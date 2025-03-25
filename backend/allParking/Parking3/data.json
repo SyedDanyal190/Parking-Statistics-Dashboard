@@ -18,8 +18,8 @@
   "2": {
     "vehicleType": "bus",
     "vehicleNumber": "BQU-4937",
-    "timeIn": "2025-03-03 11:00 AM",
-    "timeOut": "2025-03-03 11:15 AM",
+    "timeIn": "2025-03-01 11:00 AM",
+    "timeOut": "2025-03-01 11:15 AM",
     "level": 5,
     "bay": 3
   },
@@ -76,6 +76,14 @@
     "vehicleNumber": "GQR-5620",
     "timeIn": "2025-03-08 10:00 PM",
     "timeOut": "",
+    "level": 2,
+    "bay": 2
+  },
+  "10": {
+    "vehicleType": "car",
+    "vehicleNumber": "GQA-2221",
+    "timeIn": "2025-03-17 10:00 PM",
+    "timeOut": "2025-03-17 10:50 PM",
     "level": 2,
     "bay": 2
   }

@@ -5,6 +5,7 @@ const moment = require("moment");
 const path = require("path");
 const express = require("express");
 
+
 const router = express.Router();
 
 const NewBaseDir = path.join(__dirname, "..", "allParking");
@@ -1044,6 +1045,8 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
   if (start.toISOString().split("T")[0] === end.toISOString().split("T")[0]) {
     const dateKey = start.toISOString().split("T")[0];
 
+    // console.log("Processing for Date:!!!!111", dateKey);
+
     if (!result[dateKey]) {
       result[dateKey] = generateHourRanges().reduce((acc, hour) => {
         acc[hour] = {
@@ -1061,6 +1064,8 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
     }
 
     vehicles.forEach((vehicle) => {
+      // console.log("Processing Vehicle:!!!!222", vehicle);
+
       let timeOut = vehicle.timeOut;
 
       if (!timeOut) {
@@ -1077,34 +1082,57 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
         }
       }
 
-      let timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
-      timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
+      let timeIn = moment(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
+      timeOut = moment(timeOut, "YYYY-MM-DD hh:mm A").toDate();
+
+      // console.log(`Vehicle ${vehicle.vehicleNumber} -> Time In: ${timeIn}, Time Out: ${timeOut}`);
       const vehicleType = vehicle.vehicleType.toLowerCase();
 
       let dailyDuration = Math.min(
         (timeOut - timeIn) / 60000,
-        1440 - timeIn.getUTCHours() * 60 - timeIn.getUTCMinutes()
+        1440 - timeIn.getHours() * 60 - timeIn.getMinutes()
       );
+
+
+      // console.log(`Vehicle ${vehicle.vehicleNumber} Duration: ${dailyDuration} minutes`);
 
       if (
         timeIn.toISOString().split("T")[0] === dateKey ||
         timeOut.toISOString().split("T")[0] === dateKey
       ) {
         generateHourRanges().forEach((hourRange) => {
+          // console.log("Generated Hour Ranges:", generateHourRanges());
+
           const standardizedRange = hourRange.replace("-00:00", "-24:00");
           const [hourStart, hourEnd] = standardizedRange
             .split("-")
             .map((time) => parseInt(time.split(":")[0]));
 
           const vehicleStartHour = getHour(vehicle.timeIn);
-          const vehicleEndHour = getHour(timeOut);
+          // const vehicleEndHour = getHour(timeOut);
+          const vehicleEndHour = moment(timeOut).hour(); // Keeps local hour (23)
+
+
+              
+        // console.log("vehiclestartHours", vehicleStartHour);
+        // console.log("vehicleEnd Hours", vehicleEndHour); 
 
           if (
             (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
             (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
           ) {
+
+            // console.log(`Vehicle ${vehicle.vehicleNumber} falls in range: ${hourRange}`);
+
+
+          
+            
+
             result[dateKey][hourRange].total += 1;
             result[dateKey][hourRange][vehicleType] += 1;
+
+       
+
 
             if (!result[dateKey][hourRange].vehicles[vehicleType]) {
               result[dateKey][hourRange].vehicles[vehicleType] = {
@@ -1114,13 +1142,54 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
               };
             }
 
-            result[dateKey][hourRange].vehicles[vehicleType].totalDuration += dailyDuration;
+            // result[dateKey][hourRange].vehicles[vehicleType].totalDuration += dailyDuration;
+
+
+
+
+
+// Compute the actual time the vehicle spent in the slot
+const slotStart = moment(`${dateKey} ${hourStart}:00`, "YYYY-MM-DD HH:mm").toDate();
+const slotEnd = moment(`${dateKey} ${hourEnd}:00`, "YYYY-MM-DD HH:mm").toDate();
+
+// Compute the actual overlap duration
+const overlapStart = Math.max(timeIn.getTime(), slotStart.getTime());
+const overlapEnd = Math.min(timeOut.getTime(), slotEnd.getTime());
+
+const durationInSlot = Math.max(0, (overlapEnd - overlapStart) / 60000); // Convert ms to minutes
+
+// Ensure max duration per slot is 120 minutes
+const finalDuration = Math.min(durationInSlot, 120);
+
+result[dateKey][hourRange].vehicles[vehicleType].totalDuration += finalDuration;
+
             result[dateKey][hourRange].vehicles[vehicleType].count += 1;
 
             // Calculate cost per vehicle type
             const vehicleCost = dailyDuration * rate;
-            result[dateKey][hourRange].vehicles[vehicleType].cost += vehicleCost;
-            result[dateKey][hourRange].totalCost += vehicleCost;
+
+// Compute cost per vehicle type based on interval minutes
+const ratePerMinute = 0.083;
+const vehicleCostForInterval = finalDuration * ratePerMinute; // Using actual time spent
+
+
+
+
+            result[dateKey][hourRange].vehicles[vehicleType].cost += vehicleCostForInterval;
+            result[dateKey][hourRange].totalCost += vehicleCostForInterval;
+
+
+  
+
+            // console.log(
+            //   `Adding cost for ${vehicle.vehicleNumber} to Hour: ${hourRange}, Cost: ${vehicleCostForInterval}`
+            // );
+            // console.log(
+            //   `Updated Total Cost for ${hourRange}:`,
+            //   result[dateKey][hourRange].totalCost
+            // );
+            
+
           }
         });
       }
@@ -1139,8 +1208,36 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
           ),
           cost: vehicleData[type].cost, // Add cost per vehicle type
         })
+        
       );
     });
+
+
+    // Object.keys(result[dateKey]).forEach((hourRange) => {
+    //   const vehicleData = result[dateKey][hourRange].vehicles;
+    //   result[dateKey][hourRange].vehicles = Object.keys(vehicleData).map((type) => {
+    //     const duration = parseFloat(
+    //       (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
+    //     );
+    //     const avgDuration = parseFloat(
+    //       (vehicleData[type].totalDuration / vehicleData[type].count).toFixed(1)
+    //     );
+    
+    //     // Console log inside the loop
+    //     console.log(`Date: ${dateKey}, Hour Range: ${hourRange}, Type: ${type}`);
+    //     console.log(`Duration (hrs): ${duration}, Avg Duration (hrs): ${avgDuration}`);
+    
+    //     return {
+    //       type,
+    //       duration,
+    //       avgDuration,
+    //       cost: vehicleData[type].cost, // Add cost per vehicle type
+    //     };
+    //   });
+    // });
+    
+
+
   } else {
     for (
       let currentDate = new Date(start);
@@ -1162,6 +1259,10 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
         };
       }
 
+
+
+
+      
       vehicles.forEach((vehicle) => {
         let timeOut = vehicle.timeOut;
 
@@ -1179,8 +1280,18 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
           }
         }
 
+
+   
+
+
         let timeIn = moment.utc(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
         timeOut = moment.utc(timeOut, "YYYY-MM-DD hh:mm A").toDate();
+
+
+
+
+     
+
         const vehicleType = vehicle.vehicleType.toLowerCase();
 
         let dailyStart = new Date(dateKey);
@@ -1188,10 +1299,34 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
         let dailyEnd = new Date(dateKey);
         dailyEnd.setUTCHours(23, 59, 59, 999);
 
+
         let adjustedTimeIn = timeIn < dailyStart ? dailyStart : timeIn;
         let adjustedTimeOut = timeOut > dailyEnd ? dailyEnd : timeOut;
-
+        
         let dailyDuration = (adjustedTimeOut - adjustedTimeIn) / 60000;
+        
+
+      
+        
+
+        // let adjustedTimeIn = timeIn < dailyStart ? dailyStart : timeIn;
+        // let adjustedTimeOut = timeOut > dailyEnd ? dailyEnd : timeOut;
+
+      
+
+
+
+        // let dailyDuration = (adjustedTimeOut - adjustedTimeIn) / 60000;
+
+
+
+        // let dailyDuration  = (timeOut - timeIn) / 60000;
+
+
+        // Log the vehicle's duration
+        // console.log(`Vehicle ID: ${vehicle.vehicleNumber}, Type: ${vehicle.vehicleType}`);
+     
+        // console.log(`Duration (minutes): ${dailyDuration}`);
 
         if (
           timeIn <= end &&
@@ -1292,6 +1427,369 @@ const findLongestParkingDuration = (data2, startDate, endDate, updatedTimeOuts) 
 };
 
 
+// const processParkingData1 = (startDate , endDate,parkingData ) => {
+//   // const startDate = "2025-03-01T00:00:00.000Z"; // Example Start Date
+//   // const endDate = "2025-03-07T23:59:59.999Z";   // Example End Date (Dynamic)
+
+//   console.log("Start Date:", startDate);
+//   console.log("End Date:", endDate);
+  
+//   const result = {};
+//   const timeSlots = [
+//     "00:00-02:00", "02:00-04:00", "04:00-06:00", "06:00-08:00",
+//     "08:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00",
+//     "16:00-18:00", "18:00-20:00", "20:00-22:00", "22:00-24:00"
+//   ];
+
+
+
+
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+
+//   if (start > end) {
+//     console.log("⚠️ Invalid Date Range: Start date is after end date.");
+//     return {};
+//   }
+
+//   // ✅ Fix: Ensure we correctly loop from start to end date
+//   for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+//     let dateStr = d.toISOString().split("T")[0]; // Convert to YYYY-MM-DD
+
+//     result[dateStr] = {}; // Initialize empty object
+//     timeSlots.forEach(slot => {
+//       result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+//     });
+
+//     console.log("AfterDate", dateStr); // ✅ Now logs all expected dates!
+//   }
+//   // 🔹 Process actual parking data
+//   for (const key in parkingData) {
+//     const entry = parkingData[key];
+
+//     if (!entry.timeOut || entry.timeOut.trim() === "") {
+//       continue; // Skip if timeOut is missing
+//     }
+
+//     const dateStr = entry.timeIn.split(" ")[0]; // Extract date part (YYYY-MM-DD)
+//     const dateObj = new Date(dateStr); // Convert extracted date to Date object
+
+//     if (dateObj < start || dateObj > end) {
+//       continue; // Skip dates outside range
+//     }
+
+//     if (!result[dateStr]) {
+//       result[dateStr] = {};
+//       timeSlots.forEach(slot => {
+//         result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+//       });
+//     }
+
+//     const timeIn = new Date(entry.timeIn);
+//     const timeOut = new Date(entry.timeOut);
+//     let duration = (timeOut - timeIn) / 60000; // Convert milliseconds to minutes
+
+//     for (let slot of timeSlots) {
+//       let [slotStart, slotEnd] = slot.split("-").map(t => {
+//         let [hours, minutes] = t.split(":").map(Number);
+//         return new Date(timeIn.getFullYear(), timeIn.getMonth(), timeIn.getDate(), hours, minutes);
+//       });
+
+//       if (timeIn < slotEnd && timeOut > slotStart) {
+//         let start = timeIn > slotStart ? timeIn : slotStart;
+//         let end = timeOut < slotEnd ? timeOut : slotEnd;
+//         let slotDuration = (end - start) / 60000;
+//         result[dateStr][slot].totalDuration += slotDuration;
+//         result[dateStr][slot].durations.push(slotDuration);
+//         result[dateStr][slot].vehicle.push(entry.vehicleType);
+//       }
+//     }
+//   }
+
+//   for (const date in result) {
+//     let totalDuration = 0;
+//     let uniqueVehicles = new Set();
+//     for (const slot in result[date]) {
+//       totalDuration += result[date][slot].totalDuration;
+//       result[date][slot].cost = result[date][slot].totalDuration * 0.083;
+//       result[date][slot].vehicle.forEach(v => uniqueVehicles.add(v));
+//     }
+//     result[date].dailyAverageDuration = uniqueVehicles.size > 0 ? totalDuration / uniqueVehicles.size : 0;
+//   }
+
+//   return result;
+// };
+
+// const processParkingData1 = (startDate , endDate,parkingData , updateTimeOut) => {
+//   console.log("Start Date:", startDate);
+//   console.log("End Date:", endDate);
+  
+//   const result = {};
+//   const timeSlots = [
+//     "00:00-02:00", "02:00-04:00", "04:00-06:00", "06:00-08:00",
+//     "08:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00",
+//     "16:00-18:00", "18:00-20:00", "20:00-22:00", "22:00-24:00"
+//   ];
+
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+
+//   if (start > end) {
+//     console.log("⚠️ Invalid Date Range: Start date is after end date.");
+//     return {};
+//   }
+
+//   for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+//     let dateStr = d.toISOString().split("T")[0];
+//     result[dateStr] = {};
+//     timeSlots.forEach(slot => {
+//       result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+//     });
+//   }
+
+//   for (const key in parkingData) {
+//     const entry = parkingData[key];
+
+//     if (!entry.timeOut || entry.timeOut.trim() === "") {
+//       continue;
+//     }
+
+//     const dateStr = entry.timeIn.split(" ")[0];
+//     const dateObj = new Date(dateStr);
+
+//     if (dateObj < start || dateObj > end) {
+//       continue;
+//     }
+
+//     if (!result[dateStr]) {
+//       result[dateStr] = {};
+//       timeSlots.forEach(slot => {
+//         result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+//       });
+//     }
+
+//     const timeIn = new Date(entry.timeIn);
+//     const timeOut = new Date(entry.timeOut);
+//     let duration = (timeOut - timeIn) / 60000;
+
+//     for (let slot of timeSlots) {
+//       let [slotStart, slotEnd] = slot.split("-").map(t => {
+//         let [hours, minutes] = t.split(":").map(Number);
+//         return new Date(timeIn.getFullYear(), timeIn.getMonth(), timeIn.getDate(), hours, minutes);
+//       });
+
+//       if (timeIn < slotEnd && timeOut > slotStart) {
+//         let start = timeIn > slotStart ? timeIn : slotStart;
+//         let end = timeOut < slotEnd ? timeOut : slotEnd;
+//         let slotDuration = (end - start) / 60000;
+//         result[dateStr][slot].totalDuration += slotDuration;
+//         result[dateStr][slot].durations.push(slotDuration);
+//         result[dateStr][slot].vehicle.push(entry.vehicleNumber);
+//       }
+//     }
+//   }
+
+//   for (const date in result) {
+//     let totalDuration = 0;
+//     let uniqueVehicleNumbers = new Set();
+//     for (const slot in result[date]) {
+//       totalDuration += result[date][slot].totalDuration;
+//       result[date][slot].cost = result[date][slot].totalDuration * 0.083;
+//       result[date][slot].vehicle.forEach(v => uniqueVehicleNumbers.add(v));
+//     }
+//     result[date].dailyAverageDuration = uniqueVehicleNumbers.size > 0 ? totalDuration / uniqueVehicleNumbers.size : 0;
+//   }
+
+//   return result;
+// };
+
+// const processParkingData1 = (startDate, endDate, parkingData) => {
+//   console.log("Start Date:", startDate);
+//   console.log("End Date:", endDate);
+  
+//   const result = {};
+//   const timeSlots = [
+//     "00:00-02:00", "02:00-04:00", "04:00-06:00", "06:00-08:00",
+//     "08:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00",
+//     "16:00-18:00", "18:00-20:00", "20:00-22:00", "22:00-24:00"
+//   ];
+
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+
+//   if (start > end) {
+//     console.log("⚠️ Invalid Date Range: Start date is after end date.");
+//     return {};
+//   }
+
+//   // Initialize result object for each date in range
+//   for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+//     let dateStr = d.toISOString().split("T")[0];
+//     result[dateStr] = {};
+//     timeSlots.forEach(slot => {
+//       result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+//     });
+//   }
+
+//   for (const key in parkingData) {
+//     const entry = parkingData[key];
+
+//     if (!entry.timeOut || entry.timeOut.trim() === "") {
+//       continue;
+//     }
+
+//     const timeIn = new Date(entry.timeIn);
+//     const timeOut = new Date(entry.timeOut);
+
+//     // Ensure parking session overlaps with the selected range
+//     if (timeOut < start || timeIn > end) {
+//         continue;
+//     }
+
+//     // Iterate through each day in the selected range
+//     for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+//       let dateStr = d.toISOString().split("T")[0];
+
+//       if (!result[dateStr]) {
+//         result[dateStr] = {};
+//         timeSlots.forEach(slot => {
+//           result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+//         });
+//       }
+
+//       for (let slot of timeSlots) {
+//         let [slotStart, slotEnd] = slot.split("-").map(t => {
+//           let [hours, minutes] = t.split(":").map(Number);
+//           return new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes);
+//         });
+
+//         if (timeIn < slotEnd && timeOut > slotStart) {
+//           let start = timeIn > slotStart ? timeIn : slotStart;
+//           let end = timeOut < slotEnd ? timeOut : slotEnd;
+//           let slotDuration = (end - start) / 60000; // Convert to minutes
+//           result[dateStr][slot].totalDuration += slotDuration;
+//           result[dateStr][slot].durations.push(slotDuration);
+//           result[dateStr][slot].vehicle.push(entry.vehicleNumber);
+//         }
+//       }
+//     }
+//   }
+
+//   for (const date in result) {
+//     let totalDuration = 0;
+//     let uniqueVehicleNumbers = new Set();
+//     for (const slot in result[date]) {
+//       totalDuration += result[date][slot].totalDuration;
+//       result[date][slot].cost = result[date][slot].totalDuration * 0.083;
+//       result[date][slot].vehicle.forEach(v => uniqueVehicleNumbers.add(v));
+//     }
+//     result[date].dailyAverageDuration = uniqueVehicleNumbers.size > 0 ? totalDuration / uniqueVehicleNumbers.size : 0;
+//   }
+
+//   return result;
+// };
+
+
+
+
+const processParkingData1 = (startDate, endDate, parkingData, updatedTimeOuts) => {
+  console.log("Start Date:", startDate);
+  console.log("End Date:", endDate);
+  
+  const result = {};
+  const timeSlots = [
+    "00:00-02:00", "02:00-04:00", "04:00-06:00", "06:00-08:00",
+    "08:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00",
+    "16:00-18:00", "18:00-20:00", "20:00-22:00", "22:00-24:00"
+  ];
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (start > end) {
+    console.log("⚠️ Invalid Date Range: Start date is after end date.");
+    return {};
+  }
+
+  // Initialize result object for each date in range
+  for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+    let dateStr = d.toISOString().split("T")[0];
+    result[dateStr] = {};
+    timeSlots.forEach(slot => {
+      result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+    });
+  }
+
+  for (const key in parkingData) {
+    const entry = parkingData[key];
+
+    let timeOut = entry.timeOut; // Declare timeOut properly
+
+    // ✅ If timeOut is missing, try getting it from updatedTimeOuts
+    if (!timeOut || timeOut.trim() === "") {
+      const matchedTimeout = Object.values(updatedTimeOuts).find(
+        (item) =>
+          item.vehicleNumber === entry.vehicleNumber &&
+          item.timeIn === entry.timeIn
+      );
+
+      if (matchedTimeout) {
+        timeOut = matchedTimeout.timeOut; // Apply updated timeout
+      } else {
+        continue; // ❌ No updated timeout, skipping this entry
+      }
+    }
+
+    const timeIn = new Date(entry.timeIn);
+    timeOut = new Date(timeOut); // ✅ Convert to Date object **after updating**
+
+    // Ensure parking session overlaps with the selected range
+    if (timeOut < start || timeIn > end) {
+        continue;
+    }
+
+    // Iterate through each day in the selected range
+    for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+      let dateStr = d.toISOString().split("T")[0];
+
+      if (!result[dateStr]) {
+        result[dateStr] = {};
+        timeSlots.forEach(slot => {
+          result[dateStr][slot] = { totalDuration: 0, durations: [], cost: 0, vehicle: [] };
+        });
+      }
+
+      for (let slot of timeSlots) {
+        let [slotStart, slotEnd] = slot.split("-").map(t => {
+          let [hours, minutes] = t.split(":").map(Number);
+          return new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes);
+        });
+
+        if (timeIn < slotEnd && timeOut > slotStart) {
+          let start = timeIn > slotStart ? timeIn : slotStart;
+          let end = timeOut < slotEnd ? timeOut : slotEnd;
+          let slotDuration = (end - start) / 60000; // Convert to minutes
+          result[dateStr][slot].totalDuration += slotDuration;
+          result[dateStr][slot].durations.push(slotDuration);
+          result[dateStr][slot].vehicle.push(entry.vehicleNumber);
+        }
+      }
+    }
+  }
+
+  for (const date in result) {
+    let totalDuration = 0;
+    let uniqueVehicleNumbers = new Set();
+    for (const slot in result[date]) {
+      totalDuration += result[date][slot].totalDuration;
+      result[date][slot].cost = result[date][slot].totalDuration * 0.083;
+      result[date][slot].vehicle.forEach(v => uniqueVehicleNumbers.add(v));
+    }
+    result[date].dailyAverageDuration = uniqueVehicleNumbers.size > 0 ? totalDuration / uniqueVehicleNumbers.size : 0;
+  }
+
+  return result;
+};
 
 
 
@@ -1421,11 +1919,17 @@ router.get("/parkingData", (req, res) => {
         updatedTimeOuts
       );
 
-    
-      console.log("result12",    result12);
-      console.log("result1233",  result1233);  
 
+      const   resultNew =  processParkingData1( dynamicStartDate1, dynamicEndDate1, vehicles, updatedTimeOuts);  
+     
+      // console.log("result1233",  result1233);  
+ 
+  //     console.log("resultSameDate!!!!", resultSameDate);
       
+  //  console.log("Dailyduration",dailyDurations);
+
+  // console.log("ResultNew", resultNew);
+
        const combinedData = {
         dailyDurations,
         highestDuration,
@@ -1441,6 +1945,7 @@ router.get("/parkingData", (req, res) => {
         result12,
         result1233,
         result13,
+        resultNew,
       };
 
       // res.json(parsedData);
