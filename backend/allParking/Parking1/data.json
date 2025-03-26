@@ -114,16 +114,16 @@
   "14": {
     "vehicleType": "bus",
     "vehicleNumber": "GQA-2222",
-    "timeIn": "2025-03-28 12:01 AM",
-    "timeOut": "2025-03-28 11:56 PM",
+    "timeIn": "2025-04-26 12:01 AM",
+    "timeOut": "2025-04-29 11:56 PM",
     "level": 2,
     "bay": 2
   },
   "15": {
-    "vehicleType": "bus",
+    "vehicleType": "car",
     "vehicleNumber": "GQA-6666",
-    "timeIn": "2025-03-13 1:01 AM",
-    "timeOut": "",
+    "timeIn": "2025-04-26 12:10 AM",
+    "timeOut": "2025-04-26 12:56 AM",
     "level": 2,
     "bay": 2
   },
