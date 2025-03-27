@@ -111,27 +111,12 @@
     "level": 2,
     "bay": 2
   },
+
   "14": {
-    "vehicleType": "bus",
-    "vehicleNumber": "GQA-2222",
-    "timeIn": "2025-04-26 12:01 AM",
-    "timeOut": "2025-04-29 11:56 PM",
-    "level": 2,
-    "bay": 2
-  },
-  "15": {
-    "vehicleType": "car",
-    "vehicleNumber": "GQA-6666",
-    "timeIn": "2025-04-26 12:10 AM",
-    "timeOut": "2025-04-26 12:56 AM",
-    "level": 2,
-    "bay": 2
-  },
-  "16": {
     "vehicleType": "car",
     "vehicleNumber": "GQA-7777",
-    "timeIn": "2025-02-13 1:20 AM",
-    "timeOut": "",
+    "timeIn": "2025-03-13 1:20 AM",
+    "timeOut": "2025-03-13 1:26 AM",
     "level": 2,
     "bay": 2
   }
