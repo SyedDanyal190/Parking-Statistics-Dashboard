@@ -1085,7 +1085,7 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
       let timeIn = moment(vehicle.timeIn, "YYYY-MM-DD hh:mm A").toDate();
       timeOut = moment(timeOut, "YYYY-MM-DD hh:mm A").toDate();
 
-      console.log(`Vehicle ${vehicle.vehicleNumber} -> Time In: ${timeIn}, Time Out: ${timeOut}`);
+      // console.log(`Vehicle ${vehicle.vehicleNumber} -> Time In: ${timeIn}, Time Out: ${timeOut}`);
       const vehicleType = vehicle.vehicleType.toLowerCase();
 
       let dailyDuration = Math.min(
@@ -1443,9 +1443,9 @@ const vehicleCostForInterval = finalDuration * ratePerMinute; // Using actual ti
         result[dateKey].vehicles[vehicle.vehicleType].count += 1;
 
 
-        console.log(
-          `Date: ${dateKey}, Vehicle Type: ${vehicle.vehicleType}, Total Duration: ${result[dateKey].vehicles[vehicle.vehicleType].totalDuration} minutes`
-        );
+        // console.log(
+        //   `Date: ${dateKey}, Vehicle Type: ${vehicle.vehicleType}, Total Duration: ${result[dateKey].vehicles[vehicle.vehicleType].totalDuration} minutes`
+        // );
 
         const vehicleCost = dailyDuration * rate;
         result[dateKey].vehicles[vehicle.vehicleType].cost += vehicleCost;
@@ -1973,7 +1973,9 @@ router.get("/parkingData", (req, res) => {
         data,
         dynamicStartDate1,
         dynamicEndDate1,
-        updatedTimeOuts
+        // updatedTimeOuts
+        updatedTimeOuts[parking] || {}
+
       );
 
       // console.log("Updated TimeOuts before calling formatParkingData122:", updatedTimeOuts);
@@ -1982,13 +1984,22 @@ router.get("/parkingData", (req, res) => {
         data,
         dynamicStartDate1,
         dynamicEndDate1,
-        updatedTimeOuts
+        // updatedTimeOuts
+        updatedTimeOuts[parking] || {}
+
       );
 
-    const  result1233 = formatParkingData12233(data , dynamicStartDate1 , dynamicEndDate1 , updatedTimeOutsCalculate );
+    const  result1233 = formatParkingData12233(data , dynamicStartDate1 , dynamicEndDate1 ,
+      //  updatedTimeOutsCalculate
+      
+      updatedTimeOutsCalculate[parking] || {} // Use only relevant parking data
+    );
 
  
-    const  result13 =  findLongestParkingDuration(data ,  dynamicStartDate1 , dynamicEndDate1,  updatedTimeOuts  );
+    const  result13 =  findLongestParkingDuration(data ,  dynamicStartDate1 , dynamicEndDate1,
+        // updatedTimeOuts
+        updatedTimeOuts[parking] || {}
+      );
     
 
       // const result11 = formatParkingData11(data,dynamicStartDate, dynamicEndDate);
@@ -2019,18 +2030,25 @@ router.get("/parkingData", (req, res) => {
         dynamicEndDate1,
         vehicles,
         Rate,
-        updatedTimeOuts
+        // updatedTimeOuts
+        updatedTimeOuts[parking] || {}
+
       );
 
       const resultSameDate = processVehicleData(
         dynamicStartDate1,
         dynamicEndDate1,
         vehicles,
-        updatedTimeOuts
+        // updatedTimeOuts
+        updatedTimeOuts[parking] || {}
+
       );
 
 
-      const   resultNew =  processParkingData1( dynamicStartDate1, dynamicEndDate1, vehicles, updatedTimeOuts);  
+      const   resultNew =  processParkingData1( dynamicStartDate1, dynamicEndDate1, vehicles,
+        //  updatedTimeOuts)
+        updatedTimeOuts[parking] || {}
+       ) ;  
      
       // console.log("result1233",  result1233);  
  
@@ -2038,7 +2056,7 @@ router.get("/parkingData", (req, res) => {
       
   //  console.log("Dailyduration",dailyDurations);
 
-  // console.log("ResultNew", resultNew);
+  console.log("ResultNew!!!!!!!!!!!!!!", result13);
 
        const combinedData = {
         dailyDurations,
@@ -2194,61 +2212,130 @@ const  updatedTimeOutsCalculate = {};
 
 
 
-router.post("/updateTimeOut", async (req, res) => {
-  try {
-    const { timeOut, vehicleNumber, timeIn , parking} = req.body;
+// router.post("/updateTimeOut", async (req, res) => {
+//   try {
+//     const { timeOut, vehicleNumber, timeIn , parking} = req.body;
 
-    if (!timeOut) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing timeOut value.",
-      });
-    }
+//     if (!timeOut) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Missing timeOut value.",
+//       });
+//     }
 
 
   
-    const identifier = vehicleNumber || timeIn; // Unique identifier based on available data
-    updatedTimeOuts[identifier] = { timeOut, vehicleNumber, timeIn ,parking };
+//     const identifier = vehicleNumber || timeIn; // Unique identifier based on available data
+//     updatedTimeOuts[identifier] = { timeOut, vehicleNumber, timeIn ,parking };
 
-    console.log(
-      `Updating timeout for Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}, parking ${parking}`
-    ); // Log values
+//     console.log(
+//       `Updating timeout for Vehicle Number: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}, parking ${parking}`
+//     ); // Log values
 
-    res.json({
-      success: true,
-      message: "Timeout updated successfully",
-      updatedData: updatedTimeOuts,
-    });
-  } catch (error) {
-    console.error("Error updating timeout:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-});
+//     res.json({
+//       success: true,
+//       message: "Timeout updated successfully",
+//       updatedData: updatedTimeOuts,
+//     });
+//   } catch (error) {
+//     console.error("Error updating timeout:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// });
 
-router.post("/updateTimeOut/calculatenow", async (req, res) => {
+// router.post("/updateTimeOut/calculatenow", async (req, res) => {
+//   try {
+//     const { timeOut, vehicleNumber, timeIn , parking} = req.body;
+
+//     if (!timeOut) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Missing timeOut value.",
+//       });
+//     }
+
+//     const identifier = vehicleNumber || timeIn; // Unique identifier based on available data
+//     updatedTimeOutsCalculate[identifier] = { timeOut, vehicleNumber, timeIn,parking };
+
+//     res.json({
+//       success: true,
+//       message: "Timeout updated successfully",
+//       updatedData: updatedTimeOutsCalculate,
+//     });
+//   } catch (error) {
+//     console.error("Error updating timeout:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// });
+
+
+
+
+router.post("/updateTimeOut", async (req, res) => {
   try {
-    const { timeOut, vehicleNumber, timeIn , parking} = req.body;
+    const { timeOut, vehicleNumber, timeIn, parking } = req.body;
 
-    if (!timeOut) {
+    if (!timeOut || !parking) {
       return res.status(400).json({
         success: false,
-        message: "Missing timeOut value.",
+        message: "Missing required parameters (timeOut or parking).",
       });
     }
 
-    const identifier = vehicleNumber || timeIn; // Unique identifier based on available data
-    updatedTimeOutsCalculate[identifier] = { timeOut, vehicleNumber, timeIn,parking };
+    if (!updatedTimeOuts[parking]) {
+      updatedTimeOuts[parking] = {}; // Initialize storage per parking lot
+    }
+
+    const identifier = vehicleNumber || timeIn; // Unique identifier
+    updatedTimeOuts[parking][identifier] = { timeOut, vehicleNumber, timeIn };
+
+    // console.log(
+    //   `Updating timeout for Parking: ${parking}, Vehicle: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+    // );
 
     res.json({
       success: true,
       message: "Timeout updated successfully",
-      updatedData: updatedTimeOutsCalculate,
+      updatedData: updatedTimeOuts[parking], // Return only the data for this parking
     });
   } catch (error) {
     console.error("Error updating timeout:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
+
+
+
+router.post("/updateTimeOut/calculatenow", async (req, res) => {
+  try {
+    const { timeOut, vehicleNumber, timeIn, parking } = req.body;
+
+    if (!timeOut || !parking) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required parameters (timeOut or parking).",
+      });
+    }
+
+    if (!updatedTimeOutsCalculate[parking]) {
+      updatedTimeOutsCalculate[parking] = {}; // Initialize storage per parking lot
+    }
+
+    const identifier = vehicleNumber || timeIn; // Unique identifier
+    updatedTimeOutsCalculate[parking][identifier] = { timeOut, vehicleNumber, timeIn };
+
+    res.json({
+      success: true,
+      message: "Timeout updated successfully",
+      updatedData: updatedTimeOutsCalculate[parking], // Return only the data for this parking
+    });
+  } catch (error) {
+    console.error("Error updating timeout:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+
 
 
 module.exports = router;
