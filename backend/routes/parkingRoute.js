@@ -1895,8 +1895,14 @@ const processParkingData1 = (startDate, endDate, parkingData, updatedTimeOuts) =
       result[date][slot].cost = result[date][slot].totalDuration * 0.083;
       result[date][slot].vehicle.forEach(v => uniqueVehicleNumbers.add(v));
     }
-    result[date].dailyAverageDuration = uniqueVehicleNumbers.size > 0 ? totalDuration / uniqueVehicleNumbers.size : 0;
+
+    // result[date].dailyAverageDuration = uniqueVehicleNumbers.size > 0 ? totalDuration / uniqueVehicleNumbers.size : 0;
+//     // Change: Store total duration instead of average
+    result[date].dailyAverageDuration = totalDuration;
+
   }
+
+
 
   return result;
 };
@@ -2056,7 +2062,7 @@ router.get("/parkingData", (req, res) => {
       
   //  console.log("Dailyduration",dailyDurations);
 
-  console.log("ResultNew!!!!!!!!!!!!!!", result13);
+  console.log("ResultNew!!!!!!!!!!!!!!", resultNew);
 
        const combinedData = {
         dailyDurations,
