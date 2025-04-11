@@ -1037,6 +1037,27 @@ const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
 
 // const rate = 5; // Fixed cost per minute
 const rate = 5 / 60; // 0.0833 (5 dollars per hour)
+
+
+function isVehiclePresentOnDateRange(date, timeIn, timeOut) {
+  const startOfDay = moment.utc(date).startOf('day');
+  const endOfDay = moment.utc(date).endOf('day');
+
+
+
+  console.log("Time Out (UTC):", moment.utc(timeOut).format());
+
+
+
+
+  return (
+    moment.utc(timeIn).isSameOrBefore(endOfDay) &&
+    moment.utc(timeOut).isSameOrAfter(startOfDay)
+  );
+}
+
+
+
 const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -1096,11 +1117,17 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
 
       // console.log(`Vehicle ${vehicle.vehicleNumber} Duration: ${dailyDuration} minutes`);
 
-      if (
-        timeIn.toISOString().split("T")[0] === dateKey ||
-        timeOut.toISOString().split("T")[0] === dateKey
-      ) {
-        generateHourRanges().forEach((hourRange) => {
+      // if (
+      //   timeIn.toISOString().split("T")[0] === dateKey ||
+      //   timeOut.toISOString().split("T")[0] === dateKey
+      // ) {
+      //   generateHourRanges().forEach((hourRange) => {
+
+
+// ✅ Use new condition to correctly include vehicle across days
+if (isVehiclePresentOnDateRange(dateKey, timeIn, timeOut)) {
+  generateHourRanges().forEach((hourRange) => {
+
           // console.log("Generated Hour Ranges:", generateHourRanges());
 
           const standardizedRange = hourRange.replace("-00:00", "-24:00");
@@ -1108,23 +1135,66 @@ const processVehicleData = (startDate, endDate, vehicles, updatedTimeOuts) => {
             .split("-")
             .map((time) => parseInt(time.split(":")[0]));
 
-          const vehicleStartHour = getHour(vehicle.timeIn);
-          // const vehicleEndHour = getHour(timeOut);
-          const vehicleEndHour = moment(timeOut).hour(); // Keeps local hour (23)
+          // const vehicleStartHour = getHour(vehicle.timeIn);
+          // // const vehicleEndHour = getHour(timeOut);
+          // const vehicleEndHour = moment(timeOut).hour(); // Keeps local hour (23)
 
 
+
+          const currentDayStart = moment.utc(dateKey).startOf('day');
+          const currentDayEnd = moment.utc(dateKey).endOf('day');
+          
+          // Ensure both timeIn and timeOut are in UTC
+          const effectiveStart = moment.max(moment.utc(timeIn), currentDayStart);
+          const effectiveEnd = moment.min(moment.utc(timeOut), currentDayEnd);
+          
+          // Get the hours in UTC
+          const vehicleStartHour = effectiveStart.hour();  // Ensuring UTC for start hour
+
+          // const vehicleEndHour = effectiveEnd.utc().hour();  // Ensuring UTC for end hour
+
+          let vehicleEndHour = effectiveEnd.utc().hour();
+
+          // Add 5 hours to vehicleEndHour
+          vehicleEndHour = vehicleEndHour + 5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+
+          console.log(`Vehicle ${vehicle.vehicleNumber} timeIn: ${vehicle.timeIn}, timeOut: ${timeOut}`);
+      
+          
               
-        // console.log("vehicle start Hours 111111", vehicleStartHour);
-        // console.log("vehicle End   Hours 222222", vehicleEndHour); 
+        console.log("vehicle start Hours 111111", vehicleStartHour);
+        console.log("vehicle End   Hours 222222", vehicleEndHour); 
 
-          if (
-            (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
-            (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
-          ) {
+          // if (
+          //   (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
+          //   (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
+          // ) {
 
-            // console.log(`Vehicle ${vehicle.vehicleNumber} falls in range: ${hourRange}`);
+          //   console.log(`Vehicle ${vehicle.vehicleNumber} falls in range: ${hourRange}`);
 
-
+            if (
+              (vehicleStartHour >= hourStart && vehicleStartHour <= hourEnd) || // <-- changed < to <=
+              (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
+            ) {
+              console.log(`Vehicle ${vehicle.vehicleNumber} falls in range: ${hourRange}`);
+          
+            
           
             
 
@@ -2058,11 +2128,11 @@ router.get("/parkingData", (req, res) => {
      
       // console.log("result1233",  result1233);  
  
-  //     console.log("resultSameDate!!!!", resultSameDate);
+      // console.log("resultSameDate!!!!", resultSameDate);
       
-  //  console.log("Dailyduration",dailyDurations);
+  //  console.log("totalCost",totalcost);
 
-  console.log("ResultNew!!!!!!!!!!!!!!", resultNew);
+  // console.log(" Result New!!!!!!!!!!!!!!", resultNew);
 
        const combinedData = {
         dailyDurations,

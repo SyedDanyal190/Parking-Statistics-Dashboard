@@ -657,6 +657,10 @@ import ReactApexChart from "react-apexcharts";
 
 const SalesAnalyticsChart = ({trafficData}) => {
 
+
+
+
+  
 console.log("Checked1!!!!!!!",trafficData.resultSameDate);
 console.log("Checked2!!!!!!!", trafficData.dailyDurations);
 
@@ -882,6 +886,12 @@ tooltip: {
                       });
 
                       const totalCost = trafficData.resultSameDate[dateKeys[0]]?.[xLabel]?.totalCost || 0;
+
+                      // console.log("Total cost (Single Day)  ",totalCost);
+
+
+
+                      
                       tooltipHtml += `
                           <span style="color: ${colorMapping.totalCost}; font-size: 18px; line-height: 18px;">●</span>  
                           <span style="color: black">Total Cost: $${totalCost.toFixed(2)}</span><br/>
@@ -916,6 +926,8 @@ tooltip: {
               });
 
               totalCostSum += dayData?.[xLabel]?.totalCost || 0;
+              // console.log("Total cost (Mutiple Day)",totalCostSum);
+
           });
 
           Object.keys(vehicleDurations).forEach((vehicleType) => {

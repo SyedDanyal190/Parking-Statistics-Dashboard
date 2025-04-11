@@ -2,31 +2,31 @@
   "0": {
     "vehicleType": "car",
     "vehicleNumber": "JTK-1532",
-    "timeIn": "2025-03-09 7:30 PM",
-    "timeOut": "2025-03-09 7:50 PM",
+    "timeIn": "2025-04-09 7:30 PM",
+    "timeOut": "2025-04-09 7:50 PM",
     "level": 3,
     "bay": 2
   },
   "1": {
     "vehicleType": "bus",
     "vehicleNumber": "VDR-6821",
-    "timeIn": "2025-03-09 1:10 AM",
-    "timeOut": "2025-03-09 1:16 AM",
+    "timeIn": "2025-04-09 1:10 AM",
+    "timeOut": "2025-04-09 1:16 AM",
     "level": 1,
     "bay": 5
   },
   "2": {
     "vehicleType": "bus",
     "vehicleNumber": "BQU-4937",
-    "timeIn": "2025-03-01 11:00 AM",
-    "timeOut": "2025-03-01 11:15 AM",
+    "timeIn": "2025-04-01 11:00 AM",
+    "timeOut": "2025-04-01 11:15 AM",
     "level": 5,
     "bay": 3
   },
   "3": {
     "vehicleType": "car",
     "vehicleNumber": "KZP-2385",
-    "timeIn": "2025-03-09 3:00 AM",
+    "timeIn": "2025-04-09 3:00 AM",
     "timeOut": "",
     "level": 4,
     "bay": 1
@@ -34,31 +34,31 @@
   "4": {
     "vehicleType": "car",
     "vehicleNumber": "MNV-4729",
-    "timeIn": "2025-03-02 9:01 PM",
-    "timeOut": "2025-03-02 9:40 PM",
+    "timeIn": "2025-04-02 9:01 PM",
+    "timeOut": "2025-04-02 9:40 PM",
     "level": 2,
     "bay": 4
   },
   "5": {
     "vehicleType": "car",
     "vehicleNumber": "WFA-5614",
-    "timeIn": "2025-03-03 5:00 AM",
-    "timeOut": "2025-03-03 5:15 AM",
+    "timeIn": "2025-04-03 5:00 AM",
+    "timeOut": "2025-04-03 5:15 AM",
     "level": 3,
     "bay": 1
   },
   "6": {
     "vehicleType": "van",
     "vehicleNumber": "OIX-8253",
-    "timeIn": "2025-03-08 7:10 PM",
-    "timeOut": "2025-03-08 7:30 PM",
+    "timeIn": "2025-04-08 7:10 PM",
+    "timeOut": "2025-04-08 7:30 PM",
     "level": 1,
     "bay": 3
   },
   "7": {
     "vehicleType": "car",
     "vehicleNumber": "HVC-3074",
-    "timeIn": "2025-03-03 9:00 PM",
+    "timeIn": "2025-04-10 6:12 PM",
     "timeOut": "",
     "level": 5,
     "bay": 5
@@ -66,24 +66,16 @@
   "8": {
     "vehicleType": "van",
     "vehicleNumber": "GQR-5619",
-    "timeIn": "2025-03-08 1:00 PM",
-    "timeOut": "2025-03-08 1:30 PM",
+    "timeIn": "2025-04-08 1:00 PM",
+    "timeOut": "2025-04-08 1:30 PM",
     "level": 2,
     "bay": 2
   },
   "9": {
     "vehicleType": "car",
     "vehicleNumber": "GQR-5620",
-    "timeIn": "2025-03-08 10:00 PM",
-    "timeOut": "",
-    "level": 2,
-    "bay": 2
-  },
-  "10": {
-    "vehicleType": "car",
-    "vehicleNumber": "GQA-2221",
-    "timeIn": "2025-03-17 10:00 PM",
-    "timeOut": "2025-03-17 10:50 PM",
+    "timeIn": "2025-04-07 7:52 PM",
+    "timeOut": "2025-04-07 7:57 PM",
     "level": 2,
     "bay": 2
   }
