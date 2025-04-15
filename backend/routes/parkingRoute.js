@@ -637,7 +637,10 @@ const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
           cost = (durationInMinutes * Rate).toFixed(2);
         }
 
-        return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}`;
+        // return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}`;
+     
+        return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}, Image: ${entry.imageUrl}`;
+
       });
   } catch (error) {
     console.error("Error parsing data:", error);
@@ -2132,7 +2135,7 @@ router.get("/parkingData", (req, res) => {
       
   //  console.log("totalCost",totalcost);
 
-  // console.log(" Result New!!!!!!!!!!!!!!", resultNew);
+  console.log(" Result New!!!!!!!!!!!!!!", result1233);
 
        const combinedData = {
         dailyDurations,

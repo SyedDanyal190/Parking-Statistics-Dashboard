@@ -2,10 +2,11 @@
   "0": {
     "vehicleType": "car",
     "vehicleNumber": "JTK-1532",
-    "timeIn": "2025-04-09 7:30 PM",
-    "timeOut": "2025-04-09 7:50 PM",
+    "timeIn": "2025-04-01 7:30 PM",
+    "timeOut": "2025-04-01 7:50 PM",
     "level": 3,
-    "bay": 2
+    "bay": 2,
+      "imageUrl": "https://images.pexels.com/photos/14277569/pexels-photo-14277569.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "1": {
     "vehicleType": "bus",
@@ -13,7 +14,8 @@
     "timeIn": "2025-04-03 1:10 AM",
     "timeOut": "2025-04-03 1:16 AM",
     "level": 1,
-    "bay": 5
+    "bay": 5,
+      "imageUrl": "https://images.pexels.com/photos/15670/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "2": {
     "vehicleType": "bus",
@@ -21,7 +23,8 @@
     "timeIn": "2025-04-03 11:00 AM",
     "timeOut": "2025-04-03 11:15 AM",
     "level": 5,
-    "bay": 3
+    "bay": 3,
+      "imageUrl": "https://media.istockphoto.com/id/1287689245/photo/city-bus-goes-along-street.jpg?s=1024x1024&w=is&k=20&c=iDsjbDs6kvCICoGB9cXibOuSoXzGeyfBl6CHwXQvJ2k="
   },
   "3": {
     "vehicleType": "car",
@@ -29,7 +32,8 @@
     "timeIn": "2025-04-09 3:00 AM",
     "timeOut": "",
     "level": 4,
-    "bay": 1
+    "bay": 1,
+      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "4": {
     "vehicleType": "car",
@@ -37,7 +41,8 @@
     "timeIn": "2025-04-02 9:01 PM",
     "timeOut": "2025-04-02 9:40 PM",
     "level": 2,
-    "bay": 4
+    "bay": 4,
+      "imageUrl": "https://images.pexels.com/photos/14277569/pexels-photo-14277569.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "5": {
     "vehicleType": "car",
@@ -45,7 +50,8 @@
     "timeIn": "2025-04-03 5:00 AM",
     "timeOut": "2025-04-03 5:15 AM",
     "level": 3,
-    "bay": 1
+    "bay": 1,
+      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "6": {
     "vehicleType": "van",
@@ -53,7 +59,8 @@
     "timeIn": "2025-04-08 7:10 PM",
     "timeOut": "2025-04-08 7:30 PM",
     "level": 1,
-    "bay": 3
+    "bay": 3,
+      "imageUrl": "https://media.istockphoto.com/id/1503285986/photo/white-delivery-van-on-the-highway-white-modern-delivery-small-shipment-cargo-courier-van.jpg?s=2048x2048&w=is&k=20&c=TTv2xJ7FYIQzFefo8Eu-jOLWlAQYsPJ8a2B2afUyspY="
   },
   "7": {
     "vehicleType": "car",
@@ -61,7 +68,8 @@
     "timeIn": "2025-04-06 9:00 PM",
     "timeOut": "2025-04-06 9:05 PM",
     "level": 5,
-    "bay": 5
+    "bay": 5,
+      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "8": {
     "vehicleType": "van",
@@ -69,7 +77,8 @@
     "timeIn": "2025-04-05 1:00 PM",
     "timeOut": "2025-04-05 1:30 PM",
     "level": 2,
-    "bay": 2
+    "bay": 2,
+      "imageUrl": "https://media.istockphoto.com/id/1297658517/photo/delivery-van-delivers-in-a-city.jpg?s=1024x1024&w=is&k=20&c=78B1IYKZb0OFk7uTweRg64oD_I6Ep_lo-myX1kMO08U="
   },
   "9": {
     "vehicleType": "car",
@@ -77,7 +86,8 @@
     "timeIn": "2025-04-10 10:00 PM",
     "timeOut": "",
     "level": 2,
-    "bay": 2
+    "bay": 2,
+      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "10": {
     "vehicleType": "car",
@@ -85,7 +95,8 @@
     "timeIn": "2025-04-10 10:00 PM",
     "timeOut": "2025-04-10 10:30 PM",
     "level": 2,
-    "bay": 2
+    "bay": 2,
+      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   }
 
 
