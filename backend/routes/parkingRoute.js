@@ -1177,12 +1177,12 @@ if (isVehiclePresentOnDateRange(dateKey, timeIn, timeOut)) {
 
           
 
-          console.log(`Vehicle ${vehicle.vehicleNumber} timeIn: ${vehicle.timeIn}, timeOut: ${timeOut}`);
+          // console.log(`Vehicle ${vehicle.vehicleNumber} timeIn: ${vehicle.timeIn}, timeOut: ${timeOut}`);
       
           
               
-        console.log("vehicle start Hours 111111", vehicleStartHour);
-        console.log("vehicle End   Hours 222222", vehicleEndHour); 
+        // console.log("vehicle start Hours 111111", vehicleStartHour);
+        // console.log("vehicle End   Hours 222222", vehicleEndHour); 
 
           // if (
           //   (vehicleStartHour >= hourStart && vehicleStartHour < hourEnd) ||
@@ -1195,7 +1195,7 @@ if (isVehiclePresentOnDateRange(dateKey, timeIn, timeOut)) {
               (vehicleStartHour >= hourStart && vehicleStartHour <= hourEnd) || // <-- changed < to <=
               (vehicleStartHour <= hourStart && vehicleEndHour >= hourEnd)
             ) {
-              console.log(`Vehicle ${vehicle.vehicleNumber} falls in range: ${hourRange}`);
+              // console.log(`Vehicle ${vehicle.vehicleNumber} falls in range: ${hourRange}`);
           
             
           
@@ -1532,7 +1532,7 @@ const vehicleCostForInterval = finalDuration * ratePerMinute; // Using actual ti
       (sum, v) => sum + v.totalDuration,
       0
     );
-    console.log(`Date: ${dateKey}, Total Duration for All Vehicles: ${dailyTotalDuration} minutes`);
+    // console.log(`Date: ${dateKey}, Total Duration for All Vehicles: ${dailyTotalDuration} minutes`);
 
 
     const vehicleData = result[dateKey].vehicles;
@@ -2129,13 +2129,14 @@ router.get("/parkingData", (req, res) => {
         updatedTimeOuts[parking] || {}
        ) ;  
      
-      // console.log("result1233",  result1233);  
+      console.log("result1233",  result1233);  
  
       // console.log("resultSameDate!!!!", resultSameDate);
       
-  //  console.log("totalCost",totalcost);
+//  console.log("dailyDuartion",dailyDurations);
 
-  console.log(" Result New!!!!!!!!!!!!!!", result1233);
+  // console.log("ResultSameDate!!!!!!!!!",resultSameDate);
+
 
        const combinedData = {
         dailyDurations,

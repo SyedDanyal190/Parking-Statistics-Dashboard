@@ -33,7 +33,7 @@
     "timeOut": "",
     "level": 4,
     "bay": 1,
-      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "imageUrl": "https://images.pexels.com/photos/12765634/pexels-photo-12765634.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "4": {
     "vehicleType": "car",
@@ -42,7 +42,7 @@
     "timeOut": "2025-04-02 9:40 PM",
     "level": 2,
     "bay": 4,
-      "imageUrl": "https://images.pexels.com/photos/14277569/pexels-photo-14277569.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "imageUrl": "https://images.pexels.com/photos/99435/pexels-photo-99435.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "5": {
     "vehicleType": "car",
@@ -51,7 +51,7 @@
     "timeOut": "2025-04-03 5:15 AM",
     "level": 3,
     "bay": 1,
-      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "imageUrl": "https://images.pexels.com/photos/12590802/pexels-photo-12590802.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "6": {
     "vehicleType": "van",
@@ -69,7 +69,7 @@
     "timeOut": "2025-04-06 9:05 PM",
     "level": 5,
     "bay": 5,
-      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "imageUrl": "https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "8": {
     "vehicleType": "van",
@@ -87,7 +87,7 @@
     "timeOut": "",
     "level": 2,
     "bay": 2,
-      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "imageUrl": "https://images.pexels.com/photos/16716063/pexels-photo-16716063/free-photo-of-mercedes-benz-sl500-on-parking-lot.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   "10": {
     "vehicleType": "car",
@@ -96,7 +96,7 @@
     "timeOut": "2025-04-10 10:30 PM",
     "level": 2,
     "bay": 2,
-      "imageUrl": "https://images.pexels.com/photos/3786091/pexels-photo-3786091.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "imageUrl": "https://images.pexels.com/photos/7343049/pexels-photo-7343049.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   }
 
 

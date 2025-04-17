@@ -40,7 +40,7 @@ const Dashboard = ({ selectedGroup, optionGroup, tollPlazaData,
   const [highestTimestamp, setHighestTimestamp] = useState(null);
 
 
-console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
+// console.log("TrafficData!!!!!!!!!!!!!!",trafficData);
 
 
    // Function to handle receiving the highest timestamp

@@ -62,7 +62,7 @@ const App = (props) => {
   };
 
   useEffect(() => {
-    console.log("Updated Date Range in Parent:", dateRange);
+    // console.log("Updated Date Range in Parent:", dateRange);
   }, [dateRange]);
 
 
@@ -189,7 +189,7 @@ const fetchTrafficData = () => {
     fetch(`${baseUrl}/apipsd/parking/parkingData?parking=${parkingName}&startDate=${start}&endDate=${end}`, { method: "GET" })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Received Traffic Data: ", data);
+        // console.log("Received Traffic Data: ", data);
         setTrafficData(data);
       })
       .catch((error) => console.error("Error fetching dataset:", error));

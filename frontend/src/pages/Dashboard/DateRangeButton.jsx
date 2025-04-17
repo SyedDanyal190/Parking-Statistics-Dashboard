@@ -34,7 +34,7 @@ const DateRangeButton = ({ onDateChange } ) => {
 
   const handleOnChange = (ranges) => {
     const { startDate, endDate } = ranges.selection;
-    console.log('Date Type Check!!!!!!!!!!!!!!!!!!!!!!!!!:', startDate, endDate);
+    // console.log('Date Type Check!!!!!!!!!!!!!!!!!!!!!!!!!:', startDate, endDate);
     setDateRangeState([ranges.selection]);
     if (onDateChange) {
       onDateChange({ startDate, endDate }); // Send the dates to the parent
