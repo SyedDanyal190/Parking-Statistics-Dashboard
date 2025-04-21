@@ -110,59 +110,6 @@ const App = (props) => {
   
 
 
-  // useEffect(() => {
-  //   console.log("Date Range Changed:", dateRange); // Log to verify the date range when it changes
-
-  //   if (selectedGroup && dateRange.startDate && dateRange.endDate) {
-  //     const parkingName = encodeURIComponent(selectedGroup.value);
-
-
-  //     // Adjust the time based on your logic
-  //     const adjustTime = (date) => {
-  //       if (!date) return null;
-  //       return moment.utc(date).add(5, "hours");
-  //     };
-
-  //     // Adjusted dates with 5 hours added
-  //     const adjustedStart = adjustTime(dateRange.startDate);
-  //     const adjustedEnd = adjustTime(dateRange.endDate);
-
-  //     console.log("start!!!!!!!!!!!!!!!!!!!!!!!!!!!!", adjustedStart);
-  //     console.log("End!!!!!!!!!!!!!!!!!!!!!!!!!!!!", adjustedEnd);
-
-  //     // Ensure the end date is at the end of the same day
-  //     // const adjustedEndDay = adjustedStart.clone().endOf('day');
-
-  //     // Convert the dates to UTC format
-  //     const start = adjustedStart.utc().format("YYYY-MM-DDTHH:mm:ss[Z]");
-  //     const end = adjustedEnd
-  //       .utc()
-  //       .endOf("day")
-  //       .format("YYYY-MM-DDTHH:mm:ss[Z]");
-
-        
-  //     console.log("Start Date (UTC): ", start);
-  //     console.log("End Date (UTC): ", end);
-
-  //     if (adjustedStart && adjustedEnd) {
-  //       // Fetch the combined data API
-  //       fetch(
-      
-             
-  //          `${baseUrl}/apipsd/parking/parkingData?parking=${parkingName}&startDate=${start}&endDate=${end}`, {method : "GET"})
-     
-  //         .then((response) => response.json())
-  //         .then((data) => {
-  //           console.log("Received Traffic Data: ", data); // Log the data received
-  //           setTrafficData(data); // Update the traffic data with the new data from the server
-  //         })
-  //         .catch((error) => console.error("Error fetching dataset:", error));
-  //     } else {
-  //       console.error("Adjusted start or end date is invalid");
-  //     }
-  //   }
-  // }, [selectedGroup, dateRange]); // This will trigger whenever either selectedGroup or dateRange changes
-
 
 
 
