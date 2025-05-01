@@ -558,16 +558,42 @@ const formatParkingData122 = (data2, startDate, endDate, updatedTimeOuts) => {
           );
         }
 
+        // let cost = "";
+        // if (timeOut) {
+        //   const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
+        //   // const timeOutMoment = moment.utc(timeOut, "ddd MMM DD YYYY HH:mm:ss [GMT]Z"); // Parse the new format
+        //   const timeOutMoment = moment.utc(timeOut, "YYYY-MM-DD h:mm A");
+        //   const durationInMinutes = timeOutMoment.diff(timeIn, "minutes");
+        //   cost = (durationInMinutes * Rate).toFixed(2);
+        // }
+
+        // // return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}`;
+        // return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}, Image: ${entry.imageUrl}`;
+
+        let isPaid = false;
+
         let cost = "";
+
+
+        if (matchedTimeout?.isPaid) {
+          isPaid = true;
+        }
+      
         if (timeOut) {
           const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
-          // const timeOutMoment = moment.utc(timeOut, "ddd MMM DD YYYY HH:mm:ss [GMT]Z"); // Parse the new format
           const timeOutMoment = moment.utc(timeOut, "YYYY-MM-DD h:mm A");
           const durationInMinutes = timeOutMoment.diff(timeIn, "minutes");
           cost = (durationInMinutes * Rate).toFixed(2);
         }
+      
+        if (!timeOut) {
+          cost = "";
+        }
 
-        return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}`;
+
+        return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Paid: ${isPaid ? 'Yes' : 'No'}, Bay: ${entry.bay}, Level: ${entry.level}, Image: ${entry.imageUrl} 
+        Paid: ${isPaid ? 'Yes' : 'No'}`;
+
       });
   } catch (error) {
     console.error("Error parsing data:", error);
@@ -577,24 +603,18 @@ const formatParkingData122 = (data2, startDate, endDate, updatedTimeOuts) => {
 
 
 
-const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
-  // console.log(
-  //   "Received updatedTimeOuts inside formatParkingData122:",
-  //   updatedTimeOuts
-  // );
 
+const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
   try {
     const parsedData = typeof data2 === "string" ? JSON.parse(data2) : data2;
     if (!parsedData || Object.keys(parsedData).length === 0) {
       return [];
     }
 
-    // console.log("Updated TimeOuts before processing:", updatedTimeOuts);
-
     const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
-    // const Rate = 5; // Cost per minute
     const Rate = 5 / 60; // 0.0833 (5 dollars per hour)
+
     return Object.values(parsedData)
       .sort(
         (a, b) =>
@@ -609,44 +629,114 @@ const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
       })
       .map((entry) => {
         let timeOut = entry.timeOut;
+        let isTrue = "no"; // Default value for isTrue
 
-        // ✅ Find the timeout in `updatedTimeOuts` using vehicleNumber & timeIn
+        // Find the timeout and isTrue flag from updatedTimeOuts
         const matchedTimeout = Object.values(updatedTimeOuts).find(
           (item) =>
             item.vehicleNumber === entry.vehicleNumber &&
             item.timeIn === entry.timeIn
         );
 
-        if (!timeOut && matchedTimeout) {
+        if (matchedTimeout) {
           timeOut = matchedTimeout.timeOut;
-          console.log(
-            `✅ Applied updated timeout for ${entry.vehicleNumber}: ${timeOut}`
-          );
-        } else if (!timeOut) {
-          console.log(
-            `❌ No updated timeout for vehicle: ${entry.vehicleNumber}`
-          );
+          isTrue = matchedTimeout.isTrue || "no"; // Set isTrue if available
         }
 
         let cost = "";
         if (timeOut) {
           const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
-          // const timeOutMoment = moment.utc(timeOut, "ddd MMM DD YYYY HH:mm:ss [GMT]Z"); // Parse the new format
           const timeOutMoment = moment.utc(timeOut, "YYYY-MM-DD h:mm A");
           const durationInMinutes = timeOutMoment.diff(timeIn, "minutes");
           cost = (durationInMinutes * Rate).toFixed(2);
         }
 
-        // return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}`;
-     
-        return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}, Image: ${entry.imageUrl}`;
+        if (!timeOut) {
+          cost = "";
+        }
 
+
+        // Return the data including the updated isTrue flag
+        return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}, Image: ${entry.imageUrl}, IsTrue: ${isTrue}`;
       });
   } catch (error) {
     console.error("Error parsing data:", error);
     throw new Error("Invalid JSON data");
   }
 };
+
+
+
+// const formatParkingData12233 = (data2, startDate, endDate, updatedTimeOuts) => {
+//   // console.log(
+//   //   "Received updatedTimeOuts inside formatParkingData122:",
+//   //   updatedTimeOuts
+//   // );
+
+//   try {
+//     const parsedData = typeof data2 === "string" ? JSON.parse(data2) : data2;
+//     if (!parsedData || Object.keys(parsedData).length === 0) {
+//       return [];
+//     }
+
+//     // console.log("Updated TimeOuts before processing:", updatedTimeOuts);
+
+//     const startUTC = moment.utc(startDate).format("YYYY-MM-DD");
+//     const endUTC = moment.utc(endDate).format("YYYY-MM-DD");
+//     // const Rate = 5; // Cost per minute
+//     const Rate = 5 / 60; // 0.0833 (5 dollars per hour)
+//     return Object.values(parsedData)
+//       .sort(
+//         (a, b) =>
+//           moment.utc(a.timeIn, "YYYY-MM-DD h:mm A").valueOf() -
+//           moment.utc(b.timeIn, "YYYY-MM-DD h:mm A").valueOf()
+//       ) // Sort by timeIn
+//       .filter((entry) => {
+//         const entryDate = moment
+//           .utc(entry.timeIn, "YYYY-MM-DD h:mm A")
+//           .format("YYYY-MM-DD");
+//         return entryDate >= startUTC && entryDate <= endUTC;
+//       })
+//       .map((entry) => {
+//         let timeOut = entry.timeOut;
+
+//         // ✅ Find the timeout in `updatedTimeOuts` using vehicleNumber & timeIn
+//         const matchedTimeout = Object.values(updatedTimeOuts).find(
+//           (item) =>
+//             item.vehicleNumber === entry.vehicleNumber &&
+//             item.timeIn === entry.timeIn
+//         );
+
+//         if (!timeOut && matchedTimeout) {
+//           timeOut = matchedTimeout.timeOut;
+//           console.log(
+//             `✅ Applied updated timeout for ${entry.vehicleNumber}: ${timeOut}`
+//           );
+//         } else if (!timeOut) {
+//           console.log(
+//             `❌ No updated timeout for vehicle: ${entry.vehicleNumber}`
+//           );
+//         }
+
+//         let cost = "";
+//         if (timeOut) {
+//           const timeIn = moment.utc(entry.timeIn, "YYYY-MM-DD h:mm A");
+//           // const timeOutMoment = moment.utc(timeOut, "ddd MMM DD YYYY HH:mm:ss [GMT]Z"); // Parse the new format
+//           const timeOutMoment = moment.utc(timeOut, "YYYY-MM-DD h:mm A");
+//           const durationInMinutes = timeOutMoment.diff(timeIn, "minutes");
+//           cost = (durationInMinutes * Rate).toFixed(2);
+//         }
+
+//         // return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}`;
+     
+//         return `${entry.vehicleType} - Vehicle Number: ${entry.vehicleNumber}, Time In: ${entry.timeIn}, Time Out: ${timeOut}, Cost: ${cost}, Bay: ${entry.bay}, Level: ${entry.level}, Image: ${entry.imageUrl}`;
+
+//       });
+//   } catch (error) {
+//     console.error("Error parsing data:", error);
+//     throw new Error("Invalid JSON data");
+//   }
+// };
 
 
 
@@ -1984,13 +2074,14 @@ router.get("/parkingData", (req, res) => {
         updatedTimeOuts[parking] || {}
        ) ;  
      
-      console.log("result1233",  result1233);  
+      //  console.log("result1233",result1233)
+      // console.log("result12",  result12);  
  
       // console.log("resultSameDate!!!!", resultSameDate);
       
 //  console.log("dailyDuartion",dailyDurations);
 
-  // console.log("ResultSameDate!!!!!!!!!",resultSameDate);
+//   console.log("ResultSameDate!!!!!!!!!",resultSameDate);
 
 
        const combinedData = {
@@ -2073,9 +2164,10 @@ const  updatedTimeOutsCalculate = {};
 
 
 
-router.post("/updateTimeOut", async (req, res) => {
+router.post("/payNow", async (req, res) => {
+
   try {
-    const { timeOut, vehicleNumber, timeIn, parking } = req.body;
+    const { timeOut, vehicleNumber, timeIn, parking ,  isPaid } = req.body;
 
     if (!timeOut || !parking) {
       return res.status(400).json({
@@ -2084,12 +2176,15 @@ router.post("/updateTimeOut", async (req, res) => {
       });
     }
 
+
+ 
+
     if (!updatedTimeOuts[parking]) {
       updatedTimeOuts[parking] = {}; // Initialize storage per parking lot
     }
 
     const identifier = vehicleNumber || timeIn; // Unique identifier
-    updatedTimeOuts[parking][identifier] = { timeOut, vehicleNumber, timeIn };
+    updatedTimeOuts[parking][identifier] = { timeOut, vehicleNumber, timeIn , isPaid };
 
     // console.log(
     //   `Updating timeout for Parking: ${parking}, Vehicle: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
@@ -2108,9 +2203,47 @@ router.post("/updateTimeOut", async (req, res) => {
 
 
 
+// router.post("/updateTimeOut/calculatenow", async (req, res) => {
+//   try {
+//     const { timeOut, vehicleNumber, timeIn, parking } = req.body;
+
+//     if (!timeOut || !parking) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Missing required parameters (timeOut or parking).",
+//       });
+//     }
+
+//     if (!updatedTimeOutsCalculate[parking]) {
+//       updatedTimeOutsCalculate[parking] = {}; // Initialize storage per parking lot
+//     }
+
+//     const identifier = vehicleNumber || timeIn; // Unique identifier
+//     updatedTimeOutsCalculate[parking][identifier] = { timeOut, vehicleNumber, timeIn };
+
+
+//     // console.log(
+//     //   `Updating timeout/Calculate  for Parking: ${parking}, Vehicle: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}`
+//     // );
+
+
+
+//     res.json({
+//       success: true,
+//       message: "Timeout updated successfully",
+//       updatedData: updatedTimeOutsCalculate[parking], // Return only the data for this parking
+//     });
+//   } catch (error) {
+//     console.error("Error updating timeout:", error);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// });
+
+
+
 router.post("/updateTimeOut/calculatenow", async (req, res) => {
   try {
-    const { timeOut, vehicleNumber, timeIn, parking } = req.body;
+    const { timeOut, vehicleNumber, timeIn, parking, isTrue } = req.body; // Extract isTrue
 
     if (!timeOut || !parking) {
       return res.status(400).json({
@@ -2119,23 +2252,38 @@ router.post("/updateTimeOut/calculatenow", async (req, res) => {
       });
     }
 
+    // Initialize parking if not present
     if (!updatedTimeOutsCalculate[parking]) {
       updatedTimeOutsCalculate[parking] = {}; // Initialize storage per parking lot
     }
 
-    const identifier = vehicleNumber || timeIn; // Unique identifier
-    updatedTimeOutsCalculate[parking][identifier] = { timeOut, vehicleNumber, timeIn };
+    // Unique identifier (vehicle number or time in)
+    const identifier = vehicleNumber || timeIn;
 
+    // Update the timeout details and also store `isTrue`
+    updatedTimeOutsCalculate[parking][identifier] = {
+      timeOut,
+      vehicleNumber,
+      timeIn,
+      isTrue: isTrue || "no", // Store the flag (defaults to "no" if not provided)
+    };
+
+    console.log(
+      `Updating timeout/Calculate for Parking: ${parking}, Vehicle: ${vehicleNumber}, Time In: ${timeIn}, New Timeout: ${timeOut}, isTrue: ${isTrue}`
+    );
+
+    // Respond with updated data
     res.json({
       success: true,
       message: "Timeout updated successfully",
-      updatedData: updatedTimeOutsCalculate[parking], // Return only the data for this parking
+      updatedData: updatedTimeOutsCalculate[parking], // Send the updated data
     });
   } catch (error) {
     console.error("Error updating timeout:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
+
 
 
 

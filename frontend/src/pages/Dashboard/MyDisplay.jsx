@@ -11,40 +11,37 @@ import "../../../src/pages/Dashboard/Style/Style.css";
 const MyDisplay = ({ trafficData, MainApi, parking }) => {
   const [payNowState, setPayNowState] = useState({});
   const [calNowState, setCalNowState] = useState({});
+
   const [defaultState, setDefaultState] = useState({});
   const [vehicleImages, setVehicleImages] = useState({});
 
-  useEffect(() => {
-    if (
-      !trafficData ||
-      !Array.isArray(trafficData.result1233) ||
-      trafficData.result1233.length === 0
-    ) {
-      console.log("Traffic data is empty or not in the expected format.");
-      return;
-    }
 
-    const DisplayVehicleTime = trafficData.result1233;
+  useEffect(() => {
+    if (!trafficData?.result12?.length) return;
+
+    const DisplayVehicleTime = trafficData.result12;
     const initialState = {};
     const imageMap = {};
 
     DisplayVehicleTime.forEach((item) => {
       const regex =
-        /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image:\s*(https?:\/\/[^\s]+)/;
+        /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Paid: (\w+), Bay: (\d+), Level:\s*(\d+), Image:\s*(https?:\/\/[^\s]+)/;
       const match = item.match(regex);
 
       if (match) {
-        const vehicleType = match[1].trim(); // "car", "bus", etc.
+        const vehicleType = match[1].trim();
         const vehicleNumber = match[2].trim();
-        const bayNumber = match[6].trim();
+        const timeIn = match[3].trim();
         const timeOut = match[4].trim();
-        const imageUrl = match[8].trim();
+        const cost = match[5].trim();
+        const isPaid = match[6].trim();
+        const bayNumber = match[7].trim();
+        const levelNumber = match[8].trim();
+        const imageUrl = match[9].trim();
 
-        if (imageUrl) {
-          imageMap[vehicleNumber] = imageUrl;
-        }
+        if (imageUrl) imageMap[vehicleNumber] = imageUrl;
 
-        if (timeOut && vehicleNumber && bayNumber) {
+        if ((isPaid === "Yes" || timeOut) && vehicleNumber) {
           initialState[vehicleNumber] = "Paid";
         }
       } else {
@@ -69,6 +66,7 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
   }
 
   const DisplayVehicleTime = trafficData.result1233 || [];
+
   const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
   const handleCalculateNow = (vehicleNumber, timeIn) => {
@@ -82,6 +80,7 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
         timeOut: updatedTime,
         timeIn,
         parking: parking?.label,
+        isTrue: "yes", // ✅ Send this to mark it
       }),
     })
       .then((res) => res.json())
@@ -102,10 +101,11 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
       .catch((err) => console.error("Error updating timeout:", err));
   };
 
+
   const handlePayNow = (vehicleNumber, timeIn) => {
     const updatedTime = moment().format("YYYY-MM-DD h:mm A");
 
-    fetch(`${baseUrl}/apipsd/parking/updateTimeOut`, {
+    fetch(`${baseUrl}/apipsd/parking/payNow`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -113,6 +113,7 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
         timeOut: updatedTime,
         timeIn,
         parking: parking?.label,
+        isPaid: true,
       }),
     })
       .then((res) => res.json())
@@ -180,8 +181,37 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
 
             <tbody>
               {DisplayVehicleTime.map((entry) => {
+                // const regex =
+                //   /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image: (.+)$/;
+                // const match = entry.match(regex);
+
+                // if (!match) {
+                //   console.error("Invalid entry format:", entry);
+                //   return null;
+                // }
+
+                // const vehicleType = match[1];
+                // const capitalizedVehicleType =
+                //   vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
+                // const vehicleNumber = match[2];
+                // const timeIn = match[3];
+                // // const timeOut = match[4] || "";
+                // // const cost = match[5] || "";
+
+                // let timeOut = match[4] || "";
+                // let cost = match[5] || "";
+
+                // if (calNowState[vehicleNumber]) {
+                //   timeOut = calNowState[vehicleNumber].timeOut;
+                //   cost = calNowState[vehicleNumber].cost;
+                // }
+
+                // const parkingBay = match[6];
+                // const parkingLevel = match[7];
+                // const imageUrl = match[8]; // ✅ Extract image
+
                 const regex =
-                  /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image: (.+)$/;
+                  /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image: ([^,]+), IsTrue: (yes|no)$/;
                 const match = entry.match(regex);
 
                 if (!match) {
@@ -194,11 +224,12 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
                   vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
                 const vehicleNumber = match[2];
                 const timeIn = match[3];
-                const timeOut = match[4] || "";
-                const cost = match[5] || "";
+                let timeOut = match[4] || "";
+                let cost = match[5] || "";
                 const parkingBay = match[6];
                 const parkingLevel = match[7];
-                const imageUrl = match[8]; // ✅ Extract image
+                const imageUrl = match[8];
+                const isTrue = match[9]; // ✅ will be "yes" or "no"
 
                 return (
                   <tr key={vehicleNumber}>
@@ -257,18 +288,20 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
                     <td>{parkingLevel}</td>
                     <td>{parkingBay}</td>
                     <td>{cost ? `$${cost}` : ""}</td>
+
+
                     <td>
-                      {payNowState[vehicleNumber] === "Paid" ? (
+                      {payNowState[vehicleNumber] === "Paid" ||
+                      defaultState[vehicleNumber] === "Paid" ? (
                         "Paid"
-                      ) : calNowState[vehicleNumber] ? (
+                      ) : calNowState[vehicleNumber] === "yes" ||
+                        isTrue === "yes" ? (
                         <button
                           onClick={() => handlePayNow(vehicleNumber, timeIn)}
                           className="btn btn-success btn-sm"
                         >
                           Pay Now
                         </button>
-                      ) : defaultState[vehicleNumber] === "Paid" ? (
-                        "Paid"
                       ) : (
                         <button
                           onClick={() =>
