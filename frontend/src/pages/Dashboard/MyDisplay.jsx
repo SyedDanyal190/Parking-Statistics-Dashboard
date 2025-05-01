@@ -13,7 +13,6 @@
 
 
 
-
 import React, { useState, useEffect } from "react";
 import { Card, CardBody, CardTitle } from "reactstrap";
 import moment from "moment";
@@ -27,13 +26,13 @@ import "../../../src/pages/Dashboard/Style/Style.css";
 const MyDisplay = ({ trafficData, MainApi, parking }) => {
   const [payNowState, setPayNowState] = useState({});
   const [calNowState, setCalNowState] = useState({});
-  
   const [defaultState, setDefaultState] = useState({});
   const [vehicleImages, setVehicleImages] = useState({});
 
 
 
-    
+
+
     
   useEffect(() => {
     if (!trafficData?.result12?.length) return;
@@ -58,6 +57,15 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
         const levelNumber = match[8].trim();
         const imageUrl = match[9].trim();
   
+
+      
+        // if (calNowState[vehicleNumber]) {
+        //   timeOut = calNowState[vehicleNumber].timeOut;
+        //   cost = calNowState[vehicleNumber].cost;
+        // }
+        
+
+
         if (imageUrl) imageMap[vehicleNumber] = imageUrl;
   
         if ((isPaid === "Yes" || timeOut) && vehicleNumber) {
@@ -88,47 +96,31 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
     );
   }
 
-  const DisplayVehicleTime = trafficData.result1233 || [];
+  const DisplayVehicleTime = trafficData.result12|| [];
 
-
+console.log("DisplayvehicleTime!!!!!!!!!!!!! 2222222",DisplayVehicleTime);
 
   const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-  const handleCalculateNow = (vehicleNumber, timeIn) => {
-    const updatedTime = moment().format("YYYY-MM-DD h:mm A");
-
-    fetch(`${baseUrl}/apipsd/parking/updateTimeOut/calculatenow`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        vehicleNumber,
-        timeOut: updatedTime,
-        timeIn,
-        parking: parking?.label,
-        isTrue: "yes", // ✅ Send this to mark it
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setCalNowState((prevState) => ({
-            ...prevState,
-            [vehicleNumber]: true,
-          }));
-
-          setTimeout(() => {
-            MainApi();
-          }, 300);
-        } else {
-          console.error("Failed to update timeout.");
-        }
-      })
-      .catch((err) => console.error("Error updating timeout:", err));
-  };
 
 
   
-
+  const handleCalculateNow = (vehicleNumber, timeIn) => {
+    const updatedTime = moment().format("YYYY-MM-DD h:mm A");
+    const timeInMoment = moment(timeIn, "YYYY-MM-DD h:mm A");
+    const timeDifference = moment(updatedTime).diff(timeInMoment, 'minutes');
+    const cost = (timeDifference * 0.085).toFixed(2); // Rounded cost
+  
+    setCalNowState((prevState) => ({
+      ...prevState,
+      [vehicleNumber]: {
+        calculated: true,
+        cost,
+        timeOut: updatedTime,
+      },
+    }));
+  };
+  
 
 
 
@@ -143,7 +135,6 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
         timeOut: updatedTime,
         timeIn,
         parking: parking?.label,
-        isPaid: true,
       }),
     })
       .then((res) => res.json())
@@ -210,127 +201,126 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
             </thead>
 
             <tbody>
-              {DisplayVehicleTime.map((entry) => {
+ 
 
+{DisplayVehicleTime.map((item) => {
+  const initialState = {};
+  const imageMap = {};
 
+  const regex =
+    /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Paid: (\w+), Bay: (\d+), Level:\s*(\d+), Image:\s*(https?:\/\/[^\s]+)/;
+  const match = item.match(regex);
 
+  // Declare variables outside so they are accessible
+  let vehicleType = "";
+  let vehicleNumber = "";
+  let timeIn = "";
+  let timeOut = "";
+  let cost = "";
+  let isPaid = "";
+  let bayNumber = "";
+  let levelNumber = "";
+  let imageUrl = "";
 
+  if (match) {
+    vehicleType = match[1].trim();
+    vehicleNumber = match[2].trim();
+    timeIn = match[3].trim();
+    timeOut = match[4].trim();
+    cost = match[5].trim();
+    isPaid = match[6].trim();
+    bayNumber = match[7].trim();
+    levelNumber = match[8].trim();
+    imageUrl = match[9].trim();
 
+    if (calNowState[vehicleNumber]) {
+      timeOut = calNowState[vehicleNumber].timeOut;
+      cost = calNowState[vehicleNumber].cost;
+    }
 
+    if (imageUrl) imageMap[vehicleNumber] = imageUrl;
 
+    if ((isPaid === "Yes" || timeOut) && vehicleNumber) {
+      initialState[vehicleNumber] = "Paid";
+    }
+  } else {
+    console.log("No match for:", item);
+    return null; // Skip rendering if no match
+  }
 
+  const capitalizedVehicleType = vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
+  const parkingBay = bayNumber;
+  const parkingLevel = levelNumber;
 
-                const regex = /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image: ([^,]+), IsTrue: (yes|no)$/;
-                const match = entry.match(regex);
-                
-                if (!match) {
-                  console.error("Invalid entry format:", entry);
-                  return null;
-                }
-                
-                const vehicleType = match[1];
-                const capitalizedVehicleType = vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
-                const vehicleNumber = match[2];
-                const timeIn = match[3];
-                let timeOut = match[4] || "";
-                let cost = match[5] || "";
-                const parkingBay = match[6];
-                const parkingLevel = match[7];
-                const imageUrl = match[8];
-                const isTrue = match[9]; // ✅ will be "yes" or "no"
-                
+  return (
+    <tr key={vehicleNumber}>
+      <td>
+        {renderVehicleIcon(vehicleType)}
+        {capitalizedVehicleType}
+      </td>
 
+      <td
+        style={{ position: "relative", fontWeight: "bold" }}
+        onMouseEnter={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const tooltip = document.createElement("div");
+          tooltip.id = "vehicleToolTip";
+          tooltip.className = "custom-tooltip";
 
+          tooltip.style.position = "absolute";
+          tooltip.style.top = `${rect.top + window.scrollY - 110}px`;
+          tooltip.style.left = `${rect.left}px`;
+          tooltip.style.zIndex = "9999";
+          tooltip.style.background = "#fff";
+          tooltip.style.padding = "5px";
+          tooltip.style.borderRadius = "4px";
+          tooltip.style.boxShadow = "0px 2px 6px rgba(0,0,0,0.2)";
+          tooltip.innerHTML = `<img src="${imageUrl}" alt="vehicle" width="190" height="90" style="object-fit:cover;" />`;
 
-                return (
-                  <tr key={vehicleNumber}>
-                    {/* <td>
-                      {capitalizedVehicleType}
-                    </td> */}
+          document.body.appendChild(tooltip);
+        }}
+        onMouseLeave={() => {
+          const tooltip = document.getElementById("vehicleToolTip");
+          if (tooltip) tooltip.remove();
+        }}
+      >
+        {vehicleNumber}
+      </td>
 
-                    <td>
-                      {renderVehicleIcon(vehicleType)}
-                      {capitalizedVehicleType}
-                    </td>
+      <td>
+        {moment(timeIn, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")}
+      </td>
+      <td>
+        {timeOut
+          ? moment(timeOut, "YYYY-MM-DD h:mm A").format("DD-MM-YYYY h:mm A")
+          : ""}
+      </td>
+      <td>{parkingLevel}</td>
+      <td>{parkingBay}</td>
+      <td>{cost ? `$${cost}` : ""}</td>
+      <td>
+        {payNowState[vehicleNumber] === "Paid" || defaultState[vehicleNumber] === "Paid" ? (
+          "Paid"
+        ) : calNowState[vehicleNumber] ? (
+          <button
+            onClick={() => handlePayNow(vehicleNumber, timeIn)}
+            className="btn btn-success btn-sm"
+          >
+            Pay Now
+          </button>
+        ) : (
+          <button
+            onClick={() => handleCalculateNow(vehicleNumber, timeIn)}
+            className="btn btn-primary btn-sm"
+          >
+            Calculate Now
+          </button>
+        )}
+      </td>
+    </tr>
+  );
+})}
 
-                    <td
-                      style={{ position: "relative", fontWeight: "bold" }}
-                      onMouseEnter={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const tooltip = document.createElement("div");
-                        tooltip.id = "vehicleToolTip";
-                        tooltip.className = "custom-tooltip";
-
-                        tooltip.style.position = "absolute";
-                        tooltip.style.top = `${
-                          rect.top + window.scrollY - 110
-                        }px`; // Adjust based on your needs
-                        tooltip.style.left = `${rect.left}px`;
-
-                        tooltip.style.zIndex = "9999";
-                        tooltip.style.background = "#fff";
-                        tooltip.style.padding = "5px";
-                        tooltip.style.borderRadius = "4px";
-                        tooltip.style.boxShadow = "0px 2px 6px rgba(0,0,0,0.2)";
-                        tooltip.innerHTML = `<img src="${imageUrl}" alt="vehicle" width="190" height="90" style="object-fit:cover;" />`;
-
-                        document.body.appendChild(tooltip);
-                      }}
-                      onMouseLeave={() => {
-                        const tooltip =
-                          document.getElementById("vehicleToolTip");
-                        if (tooltip) tooltip.remove();
-                      }}
-                    >
-                      {vehicleNumber}
-                    </td>
-                    <td>
-                      {moment(timeIn, "YYYY-MM-DD h:mm A").format(
-                        "DD-MM-YYYY h:mm A"
-                      )}
-                    </td>
-                    <td>
-                      {timeOut
-                        ? moment(timeOut, "YYYY-MM-DD h:mm A").format(
-                            "DD-MM-YYYY h:mm A"
-                          )
-                        : ""}
-                    </td>
-                    <td>{parkingLevel}</td>
-                    <td>{parkingBay}</td>
-                    <td>{cost ? `$${cost}` : ""}</td>
-
-                  
-
-<td>
-
-
-{payNowState[vehicleNumber] === "Paid" || defaultState[vehicleNumber] === "Paid" ? (
-  "Paid"
-) : calNowState[vehicleNumber] === "yes" || isTrue === "yes" ? (
-  <button
-    onClick={() => handlePayNow(vehicleNumber, timeIn)}
-    className="btn btn-success btn-sm"
-  >
-    Pay Now
-  </button>
-) : (
-  <button
-    onClick={() => handleCalculateNow(vehicleNumber, timeIn)}
-    className="btn btn-primary btn-sm"
-  >
-    Calculate Now
-  </button>
-)}
-
-
-</td>
-
-                  
-                  
-                  </tr>
-                );
-              })}
             </tbody>
           </table>
         </div>
@@ -340,32 +330,3 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
 };
 
 export default MyDisplay;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
