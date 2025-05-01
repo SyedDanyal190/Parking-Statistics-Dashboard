@@ -1,3 +1,19 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { Card, CardBody, CardTitle } from "reactstrap";
 import moment from "moment";
@@ -11,23 +27,26 @@ import "../../../src/pages/Dashboard/Style/Style.css";
 const MyDisplay = ({ trafficData, MainApi, parking }) => {
   const [payNowState, setPayNowState] = useState({});
   const [calNowState, setCalNowState] = useState({});
-
+  
   const [defaultState, setDefaultState] = useState({});
   const [vehicleImages, setVehicleImages] = useState({});
 
 
+
+    
+    
   useEffect(() => {
     if (!trafficData?.result12?.length) return;
-
+  
     const DisplayVehicleTime = trafficData.result12;
     const initialState = {};
     const imageMap = {};
-
+  
     DisplayVehicleTime.forEach((item) => {
       const regex =
         /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Paid: (\w+), Bay: (\d+), Level:\s*(\d+), Image:\s*(https?:\/\/[^\s]+)/;
       const match = item.match(regex);
-
+  
       if (match) {
         const vehicleType = match[1].trim();
         const vehicleNumber = match[2].trim();
@@ -38,9 +57,9 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
         const bayNumber = match[7].trim();
         const levelNumber = match[8].trim();
         const imageUrl = match[9].trim();
-
+  
         if (imageUrl) imageMap[vehicleNumber] = imageUrl;
-
+  
         if ((isPaid === "Yes" || timeOut) && vehicleNumber) {
           initialState[vehicleNumber] = "Paid";
         }
@@ -48,10 +67,14 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
         console.log("No match for:", item);
       }
     });
-
+  
     setDefaultState(initialState);
     setVehicleImages(imageMap);
   }, [trafficData]);
+  
+
+
+
 
   if (!trafficData) {
     return (
@@ -66,6 +89,8 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
   }
 
   const DisplayVehicleTime = trafficData.result1233 || [];
+
+
 
   const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
@@ -100,6 +125,11 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
       })
       .catch((err) => console.error("Error updating timeout:", err));
   };
+
+
+  
+
+
 
 
   const handlePayNow = (vehicleNumber, timeIn) => {
@@ -181,47 +211,25 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
 
             <tbody>
               {DisplayVehicleTime.map((entry) => {
-                // const regex =
-                //   /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image: (.+)$/;
-                // const match = entry.match(regex);
 
-                // if (!match) {
-                //   console.error("Invalid entry format:", entry);
-                //   return null;
-                // }
 
-                // const vehicleType = match[1];
-                // const capitalizedVehicleType =
-                //   vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
-                // const vehicleNumber = match[2];
-                // const timeIn = match[3];
-                // // const timeOut = match[4] || "";
-                // // const cost = match[5] || "";
 
-                // let timeOut = match[4] || "";
-                // let cost = match[5] || "";
 
-                // if (calNowState[vehicleNumber]) {
-                //   timeOut = calNowState[vehicleNumber].timeOut;
-                //   cost = calNowState[vehicleNumber].cost;
-                // }
 
-                // const parkingBay = match[6];
-                // const parkingLevel = match[7];
-                // const imageUrl = match[8]; // ✅ Extract image
 
-                const regex =
-                  /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image: ([^,]+), IsTrue: (yes|no)$/;
+
+
+
+                const regex = /^(\w+) - Vehicle Number: ([^,]+), Time In: ([^,]+), Time Out: ([^,]*), Cost: ([^,]*), Bay: (\d+), Level:\s*(\d+), Image: ([^,]+), IsTrue: (yes|no)$/;
                 const match = entry.match(regex);
-
+                
                 if (!match) {
                   console.error("Invalid entry format:", entry);
                   return null;
                 }
-
+                
                 const vehicleType = match[1];
-                const capitalizedVehicleType =
-                  vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
+                const capitalizedVehicleType = vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1);
                 const vehicleNumber = match[2];
                 const timeIn = match[3];
                 let timeOut = match[4] || "";
@@ -230,6 +238,9 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
                 const parkingLevel = match[7];
                 const imageUrl = match[8];
                 const isTrue = match[9]; // ✅ will be "yes" or "no"
+                
+
+
 
                 return (
                   <tr key={vehicleNumber}>
@@ -289,30 +300,34 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
                     <td>{parkingBay}</td>
                     <td>{cost ? `$${cost}` : ""}</td>
 
+                  
 
-                    <td>
-                      {payNowState[vehicleNumber] === "Paid" ||
-                      defaultState[vehicleNumber] === "Paid" ? (
-                        "Paid"
-                      ) : calNowState[vehicleNumber] === "yes" ||
-                        isTrue === "yes" ? (
-                        <button
-                          onClick={() => handlePayNow(vehicleNumber, timeIn)}
-                          className="btn btn-success btn-sm"
-                        >
-                          Pay Now
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() =>
-                            handleCalculateNow(vehicleNumber, timeIn)
-                          }
-                          className="btn btn-primary btn-sm"
-                        >
-                          Calculate Now
-                        </button>
-                      )}
-                    </td>
+<td>
+
+
+{payNowState[vehicleNumber] === "Paid" || defaultState[vehicleNumber] === "Paid" ? (
+  "Paid"
+) : calNowState[vehicleNumber] === "yes" || isTrue === "yes" ? (
+  <button
+    onClick={() => handlePayNow(vehicleNumber, timeIn)}
+    className="btn btn-success btn-sm"
+  >
+    Pay Now
+  </button>
+) : (
+  <button
+    onClick={() => handleCalculateNow(vehicleNumber, timeIn)}
+    className="btn btn-primary btn-sm"
+  >
+    Calculate Now
+  </button>
+)}
+
+
+</td>
+
+                  
+                  
                   </tr>
                 );
               })}
@@ -325,3 +340,32 @@ const MyDisplay = ({ trafficData, MainApi, parking }) => {
 };
 
 export default MyDisplay;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
